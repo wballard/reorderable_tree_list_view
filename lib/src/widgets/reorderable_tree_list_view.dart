@@ -5,6 +5,7 @@ import 'package:reorderable_tree_list_view/src/actions/collapse_node_action.dart
 import 'package:reorderable_tree_list_view/src/actions/expand_node_action.dart';
 import 'package:reorderable_tree_list_view/src/actions/select_node_action.dart';
 import 'package:reorderable_tree_list_view/src/core/drag_drop_handler.dart';
+import 'package:reorderable_tree_list_view/src/core/event_controller.dart';
 import 'package:reorderable_tree_list_view/src/core/focus_manager.dart';
 import 'package:reorderable_tree_list_view/src/core/keyboard_navigation_controller.dart';
 import 'package:reorderable_tree_list_view/src/core/tree_builder.dart';
@@ -17,6 +18,7 @@ import 'package:reorderable_tree_list_view/src/models/selection_mode.dart';
 import 'package:reorderable_tree_list_view/src/models/tree_node.dart';
 import 'package:reorderable_tree_list_view/src/models/tree_path.dart';
 import 'package:reorderable_tree_list_view/src/theme/tree_theme.dart';
+import 'package:reorderable_tree_list_view/src/typedefs.dart';
 import 'package:reorderable_tree_list_view/src/widgets/reorderable_tree_list_view_item.dart';
 import 'package:reorderable_tree_list_view/src/widgets/tree_view_shortcuts.dart';
 
@@ -54,6 +56,18 @@ class ReorderableTreeListView extends StatefulWidget {
     this.initialSelection,
     this.onSelectionChanged,
     this.onItemActivated,
+    this.onExpandStart,
+    this.onExpandEnd,
+    this.onCollapseStart,
+    this.onCollapseEnd,
+    this.onItemTap,
+    this.canExpand,
+    this.canDrag,
+    this.canDrop,
+    this.onContextMenu,
+    this.canExpandAsync,
+    this.canDragAsync,
+    this.canDropAsync,
   });
 
   /// The sparse list of URI paths to display in the tree.
@@ -153,6 +167,42 @@ class ReorderableTreeListView extends StatefulWidget {
   /// Called when an item is activated (e.g., double-clicked or Enter pressed).
   final void Function(Uri path)? onItemActivated;
 
+  /// Called when node expansion starts.
+  final TreeExpandCallback? onExpandStart;
+
+  /// Called when node expansion completes.
+  final TreeExpandCallback? onExpandEnd;
+
+  /// Called when node collapse starts.
+  final TreeExpandCallback? onCollapseStart;
+
+  /// Called when node collapse completes.
+  final TreeExpandCallback? onCollapseEnd;
+
+  /// Called when an item is tapped.
+  final TreeItemTapCallback? onItemTap;
+
+  /// Callback to determine if a node can be expanded.
+  final TreeCanExpandCallback? canExpand;
+
+  /// Callback to determine if a node can be dragged.
+  final TreeCanDragCallback? canDrag;
+
+  /// Callback to determine if a drop is allowed.
+  final TreeCanDropCallback? canDrop;
+
+  /// Called when right-click context menu is requested.
+  final TreeContextMenuCallback? onContextMenu;
+
+  /// Async callback to determine if a node can be expanded.
+  final TreeCanExpandAsyncCallback? canExpandAsync;
+
+  /// Async callback to determine if a node can be dragged.
+  final TreeCanDragAsyncCallback? canDragAsync;
+
+  /// Async callback to determine if a drop is allowed.
+  final TreeCanDropAsyncCallback? canDropAsync;
+
   @override
   State<ReorderableTreeListView> createState() =>
       _ReorderableTreeListViewState();
@@ -162,6 +212,7 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
   late TreeState _treeState;
   late KeyboardNavigationController _keyboardController;
   late TreeFocusManager _focusManager;
+  late EventController _eventController;
   final FocusNode _treeFocusNode = FocusNode();
 
   @override
@@ -169,11 +220,31 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
     super.initState();
     _buildTreeState();
     _focusManager = TreeFocusManager();
+    _eventController = EventController()
+      ..onExpandStart = widget.onExpandStart
+      ..onExpandEnd = widget.onExpandEnd
+      ..onCollapseStart = widget.onCollapseStart
+      ..onCollapseEnd = widget.onCollapseEnd
+      ..onDragStart = widget.onDragStart
+      ..onDragEnd = widget.onDragEnd
+      ..onReorder = widget.onReorder
+      ..onSelectionChanged = widget.onSelectionChanged
+      ..onItemTap = widget.onItemTap
+      ..onItemActivated = widget.onItemActivated
+      ..canExpandCallback = widget.canExpand
+      ..canDragCallback = widget.canDrag
+      ..canDropCallback = widget.canDrop
+      ..onContextMenu = widget.onContextMenu
+      ..canExpandAsyncCallback = widget.canExpandAsync
+      ..canDragAsyncCallback = widget.canDragAsync
+      ..canDropAsyncCallback = widget.canDropAsync;
     _keyboardController = KeyboardNavigationController(
       treeState: _treeState,
       selectionMode: widget.selectionMode,
       initialSelection: widget.initialSelection,
-      onItemActivated: widget.onItemActivated,
+      onItemActivated: (Uri path) {
+        _eventController.notifyItemActivated(path);
+      },
     );
     _keyboardController.addListener(_onKeyboardControllerChanged);
   }
@@ -195,10 +266,32 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
         treeState: _treeState,
         selectionMode: widget.selectionMode,
         initialSelection: _keyboardController.selectedPaths,
-        onItemActivated: widget.onItemActivated,
+        onItemActivated: (Uri path) {
+          _eventController.notifyItemActivated(path);
+        },
       );
       _keyboardController.addListener(_onKeyboardControllerChanged);
     }
+
+    // Update EventController callbacks
+    _eventController
+      ..onExpandStart = widget.onExpandStart
+      ..onExpandEnd = widget.onExpandEnd
+      ..onCollapseStart = widget.onCollapseStart
+      ..onCollapseEnd = widget.onCollapseEnd
+      ..onDragStart = widget.onDragStart
+      ..onDragEnd = widget.onDragEnd
+      ..onReorder = widget.onReorder
+      ..onSelectionChanged = widget.onSelectionChanged
+      ..onItemTap = widget.onItemTap
+      ..onItemActivated = widget.onItemActivated
+      ..canExpandCallback = widget.canExpand
+      ..canDragCallback = widget.canDrag
+      ..canDropCallback = widget.canDrop
+      ..onContextMenu = widget.onContextMenu
+      ..canExpandAsyncCallback = widget.canExpandAsync
+      ..canDragAsyncCallback = widget.canDragAsync
+      ..canDropAsyncCallback = widget.canDropAsync;
   }
 
   @override
@@ -207,6 +300,7 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
       ..removeListener(_onKeyboardControllerChanged)
       ..dispose();
     _focusManager.dispose();
+    _eventController.dispose();
     _treeFocusNode.dispose();
     super.dispose();
   }
@@ -222,7 +316,7 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
       }
 
       // Notify selection changes
-      widget.onSelectionChanged?.call(_keyboardController.selectedPaths);
+      _eventController.notifySelectionChanged(_keyboardController.selectedPaths);
     });
   }
 
@@ -254,13 +348,43 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
     return !oldSet.containsAll(newSet) || !newSet.containsAll(oldSet);
   }
 
-  void _toggleExpansion(Uri path) {
+  Future<void> _toggleExpansion(Uri path) async {
+    final bool isExpanded = _treeState.isExpanded(path);
+    
+    // Check if expansion/collapse is allowed
+    if (!isExpanded) {
+      // Attempting to expand
+      if (!_eventController.canExpand(path)) {
+        return; // Not allowed
+      }
+      
+      // Check async validation if provided
+      if (_eventController.canExpandAsyncCallback != null) {
+        final bool canExpand = await _eventController.canExpandAsync(path);
+        if (!canExpand) {
+          return; // Not allowed
+        }
+      }
+      
+      _eventController.notifyExpandStart(path);
+    } else {
+      // Attempting to collapse
+      _eventController.notifyCollapseStart(path);
+    }
+    
     setState(() {
       _treeState.toggleExpanded(path);
     });
+    
+    // Notify completion
+    if (!isExpanded) {
+      _eventController.notifyExpandEnd(path);
+    } else {
+      _eventController.notifyCollapseEnd(path);
+    }
   }
 
-  void _handleReorder(int oldIndex, int newIndex, List<TreeNode> visibleNodes) {
+  Future<void> _handleReorder(int oldIndex, int newIndex, List<TreeNode> visibleNodes) async {
     // ReorderableListView adjusts newIndex when moving down
     int adjustedNewIndex = newIndex;
     if (oldIndex < newIndex) {
@@ -278,7 +402,20 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
       visibleNodes: visibleNodes,
     );
 
-    // Validate the drop if callback is provided
+    // Validate the drop using EventController
+    if (!_eventController.canDrop(draggedNode.path, newPath)) {
+      return; // Drop not allowed
+    }
+    
+    // Check async validation if provided
+    if (_eventController.canDropAsyncCallback != null) {
+      final bool canDrop = await _eventController.canDropAsync(draggedNode.path, newPath);
+      if (!canDrop) {
+        return; // Drop not allowed
+      }
+    }
+    
+    // Also check the legacy callback if provided
     if (widget.onWillAcceptDrop != null) {
       // Pass the new path to the callback for validation
       if (!widget.onWillAcceptDrop!(draggedNode.path, newPath)) {
@@ -303,8 +440,8 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
       return;
     }
 
-    // Call the onReorder callback
-    widget.onReorder?.call(draggedNode.path, newPath);
+    // Call the onReorder callback via EventController
+    _eventController.notifyReorder(draggedNode.path, newPath);
   }
 
   /// Creates the map of actions for the tree view.
@@ -313,7 +450,9 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
     CollapseNodeIntent: CollapseNodeAction(treeState: _treeState),
     ActivateNodeIntent: ActivateNodeAction(
       treeState: _treeState,
-      onActivate: widget.onItemActivated,
+      onActivate: (Uri path) {
+        _eventController.notifyItemActivated(path);
+      },
     ),
     SelectNodeIntent: SelectNodeAction(
       treeState: _treeState,
@@ -375,6 +514,7 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
           isFocused: _keyboardController.isFocused(node.path),
           isSelected: _keyboardController.isSelected(node.path),
           onTap: () {
+            _eventController.notifyItemTap(node.path);
             if (widget.selectionMode != SelectionMode.none) {
               _keyboardController.setFocus(node.path);
               if (widget.selectionMode == SelectionMode.single) {
@@ -382,22 +522,28 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
               }
             }
           },
+          onContextMenu: widget.onContextMenu != null
+              ? (Offset globalPosition) {
+                  _eventController.notifyContextMenu(node.path, globalPosition);
+                }
+              : null,
           child: userContent,
         );
       },
       onReorder: (int oldIndex, int newIndex) {
         _handleReorder(oldIndex, newIndex, visibleNodes);
       },
-      onReorderStart: widget.onDragStart != null
-          ? (int index) {
-              widget.onDragStart!(visibleNodes[index].path);
-            }
-          : null,
-      onReorderEnd: widget.onDragEnd != null
-          ? (int index) {
-              widget.onDragEnd!(visibleNodes[index].path);
-            }
-          : null,
+      onReorderStart: (int index) {
+        final Uri path = visibleNodes[index].path;
+        // Check if drag is allowed
+        if (!_eventController.canDrag(path)) {
+          // TODO(cancel-drag): Add drag cancellation when ReorderableListView supports it.
+        }
+        _eventController.notifyDragStart(path);
+      },
+      onReorderEnd: (int index) {
+        _eventController.notifyDragEnd(visibleNodes[index].path);
+      },
       proxyDecorator: widget.proxyDecorator,
     );
 

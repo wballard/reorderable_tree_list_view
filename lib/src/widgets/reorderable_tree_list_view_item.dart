@@ -31,6 +31,7 @@ class ReorderableTreeListViewItem extends StatelessWidget {
     this.focusNode,
     this.isFocused = false,
     this.isSelected = false,
+    this.onContextMenu,
   });
 
   /// The tree node data that determines depth and other properties.
@@ -73,6 +74,9 @@ class ReorderableTreeListViewItem extends StatelessWidget {
   /// Whether this item is currently selected.
   final bool isSelected;
 
+  /// Callback for when context menu is requested (right-click).
+  final void Function(Offset globalPosition)? onContextMenu;
+
   /// Handles expansion toggle using Actions.maybeInvoke pattern.
   void _handleExpansionToggle(BuildContext context) {
     if (isExpanded) {
@@ -105,7 +109,10 @@ class ReorderableTreeListViewItem extends StatelessWidget {
 
   /// Handles item activation using Actions.maybeInvoke pattern.
   void _handleActivation(BuildContext context) {
-    // Try to find ActivateNodeIntent action first
+    // Always call the onTap callback if provided
+    onTap?.call();
+    
+    // Also try to find ActivateNodeIntent action
     final Action<ActivateNodeIntent>? action =
         Actions.maybeFind<ActivateNodeIntent>(context);
     if (action != null) {
@@ -114,9 +121,6 @@ class ReorderableTreeListViewItem extends StatelessWidget {
         context,
         ActivateNodeIntent(node.path),
       );
-    } else {
-      // No action found, use callback
-      onTap?.call();
     }
   }
 
@@ -199,7 +203,7 @@ class ReorderableTreeListViewItem extends StatelessWidget {
     }
 
     // Apply selection/focus styling
-    final Widget result = InkWell(
+    Widget result = InkWell(
       onTap: () => _handleActivation(context),
       hoverColor: hoverColor,
       focusColor: focusColor,
@@ -219,6 +223,16 @@ class ReorderableTreeListViewItem extends StatelessWidget {
         child: content,
       ),
     );
+
+    // Wrap with GestureDetector for context menu support
+    if (onContextMenu != null) {
+      result = GestureDetector(
+        onSecondaryTapDown: (TapDownDetails details) {
+          onContextMenu!(details.globalPosition);
+        },
+        child: result,
+      );
+    }
 
     return Material(
       child: Semantics(

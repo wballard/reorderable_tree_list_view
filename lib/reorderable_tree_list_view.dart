@@ -45,6 +45,9 @@ export 'src/models/tree_path.dart';
 // Theme
 export 'src/theme/tree_theme.dart';
 
+// Typedefs
+export 'src/typedefs.dart';
+
 // Widgets
 export 'src/widgets/reorderable_tree_list_view.dart';
 export 'src/widgets/reorderable_tree_list_view_item.dart';
