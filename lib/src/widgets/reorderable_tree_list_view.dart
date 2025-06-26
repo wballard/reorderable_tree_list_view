@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:reorderable_tree_list_view/src/core/drag_drop_handler.dart';
 import 'package:reorderable_tree_list_view/src/core/tree_builder.dart';
 import 'package:reorderable_tree_list_view/src/core/tree_state.dart';
 import 'package:reorderable_tree_list_view/src/models/tree_node.dart';
+import 'package:reorderable_tree_list_view/src/models/tree_path.dart';
 import 'package:reorderable_tree_list_view/src/theme/tree_theme.dart';
 import 'package:reorderable_tree_list_view/src/widgets/reorderable_tree_list_view_item.dart';
 
@@ -27,6 +29,13 @@ class ReorderableTreeListView extends StatefulWidget {
     this.expandedByDefault = true,
     this.initiallyExpanded,
     this.animateExpansion = true,
+    this.onReorder,
+    this.onDragStart,
+    this.onDragEnd,
+    this.onWillAcceptDrop,
+    this.proxyDecorator,
+    this.enableDropIndicators = false,
+    this.onDropZoneEntered,
   });
   
   /// The sparse list of URI paths to display in the tree.
@@ -76,6 +85,39 @@ class ReorderableTreeListView extends StatefulWidget {
   /// If true, expanding and collapsing folders will be animated.
   /// If false, changes will be immediate.
   final bool animateExpansion;
+  
+  /// Called when an item is reordered via drag and drop.
+  /// 
+  /// Provides the old path and new path of the moved item.
+  final void Function(Uri oldPath, Uri newPath)? onReorder;
+  
+  /// Called when a drag operation starts.
+  /// 
+  /// Provides the path of the item being dragged.
+  final void Function(Uri path)? onDragStart;
+  
+  /// Called when a drag operation ends.
+  /// 
+  /// Provides the path of the item that was being dragged.
+  final void Function(Uri path)? onDragEnd;
+  
+  /// Called to determine if a drop is allowed.
+  /// 
+  /// Return false to prevent the drop operation.
+  final bool Function(Uri draggedPath, Uri targetPath)? onWillAcceptDrop;
+  
+  /// Custom decoration for the item being dragged.
+  /// 
+  /// If not provided, uses the default Material elevation.
+  final Widget Function(Widget child, int index, Animation<double> animation)? proxyDecorator;
+  
+  /// Whether to show drop indicators during drag operations.
+  final bool enableDropIndicators;
+  
+  /// Called when the drag enters a drop zone.
+  /// 
+  /// Provides the type of drop zone ('folder' or 'sibling') and target path.
+  final void Function(String type, Uri path)? onDropZoneEntered;
   
   @override
   State<ReorderableTreeListView> createState() => _ReorderableTreeListViewState();
@@ -133,6 +175,53 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
       _treeState.toggleExpanded(path);
     });
   }
+  
+  void _handleReorder(int oldIndex, int newIndex, List<TreeNode> visibleNodes) {
+    // ReorderableListView adjusts newIndex when moving down
+    int adjustedNewIndex = newIndex;
+    if (oldIndex < newIndex) {
+      adjustedNewIndex -= 1;
+    }
+    
+    // Get the dragged node
+    final TreeNode draggedNode = visibleNodes[oldIndex];
+    
+    // Calculate new path
+    final Uri newPath = DragDropHandler.calculateNewPath(
+      draggedNode: draggedNode,
+      oldIndex: oldIndex,
+      newIndex: adjustedNewIndex,
+      visibleNodes: visibleNodes,
+    );
+    
+    // Validate the drop if callback is provided
+    if (widget.onWillAcceptDrop != null) {
+      // Pass the new path to the callback for validation
+      if (!widget.onWillAcceptDrop!(draggedNode.path, newPath)) {
+        return; // Drop not allowed
+      }
+    }
+    
+    // Additional validation
+    final DropValidationResult validation = DragDropHandler.validateDrop(
+      draggedNode: draggedNode,
+      targetParentPath: TreePath.getParentPath(newPath) ?? Uri.parse('file://'),
+      allNodes: _treeState.allNodes,
+    );
+    
+    if (!validation.isValid) {
+      // Show error message if needed
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(validation.reason ?? 'Invalid drop')),
+        );
+      }
+      return;
+    }
+    
+    // Call the onReorder callback
+    widget.onReorder?.call(draggedNode.path, newPath);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -174,11 +263,15 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
         );
       },
       onReorder: (int oldIndex, int newIndex) {
-        // Placeholder for proper path recalculation implementation
-        // Currently logs debug information for development
-        debugPrint('DEBUG: Reorder from $oldIndex to $newIndex');
-        debugPrint('DEBUG: Moving ${visibleNodes[oldIndex].path} to position $newIndex');
+        _handleReorder(oldIndex, newIndex, visibleNodes);
       },
+      onReorderStart: widget.onDragStart != null ? (int index) {
+        widget.onDragStart!(visibleNodes[index].path);
+      } : null,
+      onReorderEnd: widget.onDragEnd != null ? (int index) {
+        widget.onDragEnd!(visibleNodes[index].path);
+      } : null,
+      proxyDecorator: widget.proxyDecorator,
     );
 
     // Wrap with TreeThemeData if a theme is provided
