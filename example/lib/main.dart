@@ -32,23 +32,32 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   // Sample paths representing a file system structure
-  final List<Uri> paths = <Uri>[
-    Uri.parse('file://home/user/documents/report.pdf'),
-    Uri.parse('file://home/user/documents/presentation.pptx'),
-    Uri.parse('file://home/user/pictures/vacation/beach.jpg'),
-    Uri.parse('file://home/user/pictures/vacation/sunset.jpg'),
-    Uri.parse('file://home/user/pictures/family.jpg'),
-    Uri.parse('file://home/user/music/playlist.m3u'),
-    Uri.parse('file://home/user/downloads/app.zip'),
-    Uri.parse('file://etc/config.conf'),
-    Uri.parse('file://var/log/system.log'),
-  ];
+  late List<Uri> paths;
+  String? _dragStatus;
+  final List<String> _reorderHistory = [];
+
+  @override
+  void initState() {
+    super.initState();
+    paths = <Uri>[
+      Uri.parse('file://home/user/documents/report.pdf'),
+      Uri.parse('file://home/user/documents/presentation.pptx'),
+      Uri.parse('file://home/user/pictures/vacation/beach.jpg'),
+      Uri.parse('file://home/user/pictures/vacation/sunset.jpg'),
+      Uri.parse('file://home/user/pictures/family.jpg'),
+      Uri.parse('file://home/user/music/playlist.m3u'),
+      Uri.parse('file://home/user/downloads/app.zip'),
+      Uri.parse('file://etc/config.conf'),
+      Uri.parse('file://var/log/system.log'),
+    ];
+  }
 
   bool _showConnectors = true;
   double _indentSize = 32.0;
   bool _showCustomTheme = false;
   bool _expandedByDefault = true;
   bool _animateExpansion = true;
+  bool _enableDragAndDrop = true;
 
   TreeTheme get _currentTheme {
     if (!_showCustomTheme) {
@@ -150,10 +159,63 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ],
                   ),
+                  SwitchListTile(
+                    title: const Text('Enable Drag and Drop'),
+                    value: _enableDragAndDrop,
+                    onChanged: (value) => setState(() => _enableDragAndDrop = value),
+                    dense: true,
+                  ),
                 ],
               ),
             ),
           ),
+          // Drag Status
+          if (_dragStatus != null)
+            Card(
+              margin: const EdgeInsets.symmetric(horizontal: 8.0),
+              color: Colors.blue.shade50,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    const Icon(Icons.info_outline, size: 16),
+                    const SizedBox(width: 8),
+                    Expanded(child: Text(_dragStatus!)),
+                  ],
+                ),
+              ),
+            ),
+          // Reorder History
+          if (_reorderHistory.isNotEmpty)
+            Card(
+              margin: const EdgeInsets.all(8.0),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Reorder History',
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                        TextButton(
+                          onPressed: () => setState(() => _reorderHistory.clear()),
+                          child: const Text('Clear'),
+                        ),
+                      ],
+                    ),
+                    ..._reorderHistory.take(5).map((entry) => Text(
+                      entry,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    )),
+                  ],
+                ),
+              ),
+            ),
           // Tree View
           Expanded(
             child: ReorderableTreeListView(
@@ -162,6 +224,60 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: const EdgeInsets.all(8),
               expandedByDefault: _expandedByDefault,
               animateExpansion: _animateExpansion,
+              onReorder: _enableDragAndDrop ? (oldPath, newPath) {
+                setState(() {
+                  // Update paths list
+                  paths = List<Uri>.from(paths);
+                  paths.remove(oldPath);
+                  paths.add(newPath);
+                  
+                  // Add to history
+                  final String shortOld = TreePath.getDisplayName(oldPath);
+                  final String shortNew = TreePath.getDisplayName(newPath);
+                  final String parent = newPath.pathSegments.isEmpty 
+                      ? 'root' 
+                      : TreePath.getDisplayName(TreePath.getParentPath(newPath) ?? newPath);
+                  _reorderHistory.insert(0, 'Moved $shortOld to $parent as $shortNew');
+                  
+                  _dragStatus = null;
+                });
+              } : null,
+              onDragStart: _enableDragAndDrop ? (path) {
+                setState(() {
+                  _dragStatus = 'Dragging: ${TreePath.getDisplayName(path)}';
+                });
+              } : null,
+              onDragEnd: _enableDragAndDrop ? (path) {
+                setState(() {
+                  if (_dragStatus?.contains('Dragging') ?? false) {
+                    _dragStatus = null;
+                  }
+                });
+              } : null,
+              onWillAcceptDrop: _enableDragAndDrop ? (draggedPath, targetPath) {
+                // Example: Don't allow dropping into 'etc' folder
+                if (targetPath.toString().contains('/etc/')) {
+                  setState(() {
+                    _dragStatus = 'Cannot drop into /etc/ folder';
+                  });
+                  return false;
+                }
+                return true;
+              } : null,
+              proxyDecorator: _enableDragAndDrop ? (child, index, animation) {
+                return AnimatedBuilder(
+                  animation: animation,
+                  builder: (context, child) {
+                    return Material(
+                      elevation: 8 * animation.value,
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.blue.withValues(alpha: 0.1),
+                      child: child,
+                    );
+                  },
+                  child: child,
+                );
+              } : null,
               itemBuilder: (BuildContext context, Uri path) {
                 final String displayName = TreePath.getDisplayName(path);
                 
