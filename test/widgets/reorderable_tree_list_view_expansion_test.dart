@@ -7,7 +7,7 @@ void main() {
     late List<Uri> testPaths;
 
     setUp(() {
-      testPaths = [
+      testPaths = <Uri>[
         Uri.parse('file://root/folder1/file1.txt'),
         Uri.parse('file://root/folder1/file2.txt'),
         Uri.parse('file://root/folder2/file3.txt'),
@@ -21,7 +21,7 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: testPaths,
-              itemBuilder: (context, path) => Text(path.pathSegments.isNotEmpty ? path.pathSegments.last : path.toString()),
+              itemBuilder: (BuildContext context, Uri path) => Text(path.pathSegments.isNotEmpty ? path.pathSegments.last : path.toString()),
             ),
           ),
         ));
@@ -43,7 +43,7 @@ void main() {
             body: ReorderableTreeListView(
               paths: testPaths,
               expandedByDefault: false,
-              itemBuilder: (context, path) => Text(path.pathSegments.isNotEmpty ? path.pathSegments.last : path.toString()),
+              itemBuilder: (BuildContext context, Uri path) => Text(path.pathSegments.isNotEmpty ? path.pathSegments.last : path.toString()),
             ),
           ),
         ));
@@ -61,8 +61,8 @@ void main() {
             body: ReorderableTreeListView(
               paths: testPaths,
               expandedByDefault: false,
-              initiallyExpanded: {Uri.parse('file://'), Uri.parse('file://root')},
-              itemBuilder: (context, path) => Text(path.pathSegments.isNotEmpty ? path.pathSegments.last : path.toString()),
+              initiallyExpanded: <Uri>{Uri.parse('file://'), Uri.parse('file://root')},
+              itemBuilder: (BuildContext context, Uri path) => Text(path.pathSegments.isNotEmpty ? path.pathSegments.last : path.toString()),
             ),
           ),
         ));
@@ -87,7 +87,7 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: testPaths,
-              itemBuilder: (context, path) => Text(path.pathSegments.isNotEmpty ? path.pathSegments.last : path.toString()),
+              itemBuilder: (BuildContext context, Uri path) => Text(path.pathSegments.isNotEmpty ? path.pathSegments.last : path.toString()),
             ),
           ),
         ));
@@ -98,12 +98,12 @@ void main() {
 
         // Find and tap the collapse icon for folder1
         // First, find the folder1 row, then find the arrow down icon in that row
-        final folder1Finder = find.ancestor(
+        final Finder folder1Finder = find.ancestor(
           of: find.text('folder1'),
           matching: find.byType(ReorderableTreeListViewItem),
         );
         
-        final arrowIconFinder = find.descendant(
+        final Finder arrowIconFinder = find.descendant(
           of: folder1Finder,
           matching: find.byIcon(Icons.keyboard_arrow_down),
         );
@@ -118,7 +118,7 @@ void main() {
         
         // But folder1 itself should still be visible with right arrow
         expect(find.text('folder1'), findsOneWidget);
-        final arrowRightFinder = find.descendant(
+        final Finder arrowRightFinder = find.descendant(
           of: folder1Finder,
           matching: find.byIcon(Icons.keyboard_arrow_right),
         );
@@ -131,8 +131,8 @@ void main() {
             body: ReorderableTreeListView(
               paths: testPaths,
               expandedByDefault: false,
-              initiallyExpanded: {Uri.parse('file://'), Uri.parse('file://root')},
-              itemBuilder: (context, path) => Text(path.pathSegments.isNotEmpty ? path.pathSegments.last : path.toString()),
+              initiallyExpanded: <Uri>{Uri.parse('file://'), Uri.parse('file://root')},
+              itemBuilder: (BuildContext context, Uri path) => Text(path.pathSegments.isNotEmpty ? path.pathSegments.last : path.toString()),
             ),
           ),
         ));
@@ -142,12 +142,12 @@ void main() {
         expect(find.text('file2.txt'), findsNothing);
 
         // Find and tap the expand icon for folder1
-        final folder1Finder = find.ancestor(
+        final Finder folder1Finder = find.ancestor(
           of: find.text('folder1'),
           matching: find.byType(ReorderableTreeListViewItem),
         );
         
-        final arrowRightFinder = find.descendant(
+        final Finder arrowRightFinder = find.descendant(
           of: folder1Finder,
           matching: find.byIcon(Icons.keyboard_arrow_right),
         );
@@ -161,7 +161,7 @@ void main() {
         expect(find.text('file2.txt'), findsOneWidget);
         
         // Arrow should now point down
-        final arrowDownFinder = find.descendant(
+        final Finder arrowDownFinder = find.descendant(
           of: folder1Finder,
           matching: find.byIcon(Icons.keyboard_arrow_down),
         );
@@ -174,8 +174,8 @@ void main() {
         await tester.pumpWidget(MaterialApp(
           home: Scaffold(
             body: ReorderableTreeListView(
-              paths: const [],
-              itemBuilder: (context, path) => Text(path.toString()),
+              paths: const <Uri>[],
+              itemBuilder: (BuildContext context, Uri path) => Text(path.toString()),
             ),
           ),
         ));
@@ -185,7 +185,7 @@ void main() {
       });
 
       testWidgets('should handle paths with no common parent', (WidgetTester tester) async {
-        final diversePaths = [
+        final List<Uri> diversePaths = <Uri>[
           Uri.parse('file://path1/file1.txt'),
           Uri.parse('http://example.com/file2.txt'),
           Uri.parse('https://example.org/file3.txt'),
@@ -195,7 +195,7 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: diversePaths,
-              itemBuilder: (context, path) => Text(path.pathSegments.isNotEmpty ? path.pathSegments.last : path.toString()),
+              itemBuilder: (BuildContext context, Uri path) => Text(path.pathSegments.isNotEmpty ? path.pathSegments.last : path.toString()),
             ),
           ),
         ));

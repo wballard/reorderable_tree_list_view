@@ -8,7 +8,7 @@ void main() {
     late List<TreeNode> nodes;
 
     setUp(() {
-      paths = [
+      paths = <Uri>[
         Uri.parse('file://root/child1/grandchild1'),
         Uri.parse('file://root/child1/grandchild2'),
         Uri.parse('file://root/child2'),
@@ -26,7 +26,7 @@ void main() {
       });
 
       test('should track expanded paths when toggling', () {
-        final child1Path = Uri.parse('file://root/child1');
+        final Uri child1Path = Uri.parse('file://root/child1');
         // child1 should be expanded by default  
         expect(treeState.expandedPaths.contains(child1Path), isTrue);
         
@@ -58,7 +58,7 @@ void main() {
       });
 
       test('should return false for collapsed nodes', () {
-        final child1Path = Uri.parse('file://root/child1');
+        final Uri child1Path = Uri.parse('file://root/child1');
         treeState.toggleExpanded(child1Path); // collapse it
         expect(treeState.isExpanded(child1Path), isFalse);
       });
@@ -98,15 +98,16 @@ void main() {
     group('getVisibleNodes', () {
       test('should return only root when all collapsed', () {
         treeState.collapseAll();
-        final visibleNodes = treeState.getVisibleNodes();
+        final List<TreeNode> visibleNodes = treeState.getVisibleNodes();
         expect(visibleNodes.length, equals(1));
         expect(visibleNodes.first.displayName, equals('file://'));
       });
 
       test('should include direct children when root is expanded', () {
-        treeState.collapseAll();
-        treeState.setExpanded(Uri.parse('file://'), expanded: true);
-        final visibleNodes = treeState.getVisibleNodes();
+        treeState
+          ..collapseAll()
+          ..setExpanded(Uri.parse('file://'), expanded: true);
+        final List<TreeNode> visibleNodes = treeState.getVisibleNodes();
         
         expect(visibleNodes.length, equals(2));
         expect(visibleNodes[0].displayName, equals('file://'));
@@ -114,11 +115,12 @@ void main() {
       });
 
       test('should include grandchildren when multiple levels expanded', () {
-        treeState.collapseAll();
-        treeState.setExpanded(Uri.parse('file://'), expanded: true);
-        treeState.setExpanded(Uri.parse('file://root'), expanded: true);
-        treeState.setExpanded(Uri.parse('file://root/child1'), expanded: true);
-        final visibleNodes = treeState.getVisibleNodes();
+        treeState
+          ..collapseAll()
+          ..setExpanded(Uri.parse('file://'), expanded: true)
+          ..setExpanded(Uri.parse('file://root'), expanded: true)
+          ..setExpanded(Uri.parse('file://root/child1'), expanded: true);
+        final List<TreeNode> visibleNodes = treeState.getVisibleNodes();
         
         expect(visibleNodes.length, equals(6));
         expect(visibleNodes[0].displayName, equals('file://'));
@@ -130,18 +132,18 @@ void main() {
       });
 
       test('should update visibility after collapse', () {
-        treeState.collapseAll();
-        treeState.setExpanded(Uri.parse('file://'), expanded: true);
-        treeState.setExpanded(Uri.parse('file://root'), expanded: true);
-        treeState.setExpanded(Uri.parse('file://root/child1'), expanded: true);
-        
-        // Collapse child1
-        treeState.setExpanded(Uri.parse('file://root/child1'), expanded: false);
-        final visibleNodes = treeState.getVisibleNodes();
+        treeState
+          ..collapseAll()
+          ..setExpanded(Uri.parse('file://'), expanded: true)
+          ..setExpanded(Uri.parse('file://root'), expanded: true)
+          ..setExpanded(Uri.parse('file://root/child1'), expanded: true)
+          // Collapse child1
+          ..setExpanded(Uri.parse('file://root/child1'), expanded: false);
+        final List<TreeNode> visibleNodes = treeState.getVisibleNodes();
         
         expect(visibleNodes.length, equals(4));
-        expect(visibleNodes.map((n) => n.displayName).toList(),
-            equals(['file://', 'root', 'child1', 'child2']));
+        expect(visibleNodes.map((TreeNode n) => n.displayName).toList(),
+            equals(<String>['file://', 'root', 'child1', 'child2']));
       });
     });
 

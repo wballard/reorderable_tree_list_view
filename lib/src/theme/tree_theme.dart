@@ -21,6 +21,14 @@ class TreeTheme {
     this.highlightColor,
   });
 
+  /// Factory constructor that returns the theme from the closest [TreeThemeData] ancestor.
+  /// 
+  /// If no [TreeThemeData] is found, returns a default theme.
+  factory TreeTheme.of(BuildContext context) {
+    final TreeThemeData? data = context.dependOnInheritedWidgetOfExactType<TreeThemeData>();
+    return data?.theme ?? const TreeTheme();
+  }
+
   /// The indentation size for each level of nesting.
   final double indentSize;
 
@@ -54,12 +62,12 @@ class TreeTheme {
   /// The color of the highlight effect when a tree item is pressed.
   final Color? highlightColor;
 
-  /// Returns the theme from the closest [TreeThemeData] ancestor.
+  /// Returns the theme from the closest [TreeThemeData] ancestor, if any.
   /// 
-  /// If no [TreeThemeData] is found, returns a default theme.
-  factory TreeTheme.of(BuildContext context) {
+  /// If no [TreeThemeData] is found, returns null.
+  static TreeTheme? maybeOf(BuildContext context) {
     final TreeThemeData? data = context.dependOnInheritedWidgetOfExactType<TreeThemeData>();
-    return data?.theme ?? const TreeTheme();
+    return data?.theme;
   }
 
   /// Creates a copy of this theme with the given fields replaced with new values.
@@ -88,14 +96,6 @@ class TreeTheme {
       splashColor: splashColor ?? this.splashColor,
       highlightColor: highlightColor ?? this.highlightColor,
     );
-
-  /// Returns the theme from the closest [TreeThemeData] ancestor, if any.
-  /// 
-  /// If no [TreeThemeData] is found, returns null.
-  static TreeTheme? maybeOf(BuildContext context) {
-    final TreeThemeData? data = context.dependOnInheritedWidgetOfExactType<TreeThemeData>();
-    return data?.theme;
-  }
 
   @override
   bool operator ==(Object other) {
