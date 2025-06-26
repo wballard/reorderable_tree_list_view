@@ -47,6 +47,8 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _showConnectors = true;
   double _indentSize = 32.0;
   bool _showCustomTheme = false;
+  bool _expandedByDefault = true;
+  bool _animateExpansion = true;
 
   TreeTheme get _currentTheme {
     if (!_showCustomTheme) {
@@ -115,6 +117,26 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   Row(
                     children: [
+                      Expanded(
+                        child: SwitchListTile(
+                          title: const Text('Expanded by Default'),
+                          value: _expandedByDefault,
+                          onChanged: (value) => setState(() => _expandedByDefault = value),
+                          dense: true,
+                        ),
+                      ),
+                      Expanded(
+                        child: SwitchListTile(
+                          title: const Text('Animate Expansion'),
+                          value: _animateExpansion,
+                          onChanged: (value) => setState(() => _animateExpansion = value),
+                          dense: true,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
                       const Text('Indent Size:'),
                       Expanded(
                         child: Slider(
@@ -138,6 +160,8 @@ class _MyHomePageState extends State<MyHomePage> {
               paths: paths,
               theme: _currentTheme,
               padding: const EdgeInsets.all(8),
+              expandedByDefault: _expandedByDefault,
+              animateExpansion: _animateExpansion,
               itemBuilder: (BuildContext context, Uri path) {
                 final String displayName = TreePath.getDisplayName(path);
                 

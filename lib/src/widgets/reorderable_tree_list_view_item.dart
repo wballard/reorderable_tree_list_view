@@ -10,6 +10,7 @@ import 'package:reorderable_tree_list_view/src/widgets/tree_connector_painter.da
 /// - Material Design compliance with InkWell feedback and theming
 /// - Consistent layout structure for tree items
 /// - Integration with TreeTheme for customizable appearance
+/// - Expansion/collapse functionality for nodes with children
 class ReorderableTreeListViewItem extends StatelessWidget {
   /// Creates a ReorderableTreeListViewItem.
   const ReorderableTreeListViewItem({
@@ -22,6 +23,7 @@ class ReorderableTreeListViewItem extends StatelessWidget {
     this.isLastInLevel = false,
     this.parentConnections = const <bool>[],
     this.onTap,
+    this.onExpansionToggle,
   });
   
   /// The tree node data that determines depth and other properties.
@@ -49,6 +51,11 @@ class ReorderableTreeListViewItem extends StatelessWidget {
 
   /// Callback for when the item is tapped.
   final VoidCallback? onTap;
+
+  /// Callback for when the expansion state should be toggled.
+  /// 
+  /// Only called for nodes with children when the expansion icon is tapped.
+  final VoidCallback? onExpansionToggle;
   
   @override
   Widget build(BuildContext context) {
@@ -86,6 +93,28 @@ class ReorderableTreeListViewItem extends StatelessWidget {
             ),
           ) : const SizedBox.shrink(),
         ),
+        // Expansion icon for nodes with children
+        if (hasChildren) ...<Widget>[
+          SizedBox(
+            width: 24,
+            height: 24,
+            child: IconButton(
+              onPressed: onExpansionToggle,
+              icon: Icon(
+                isExpanded ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_right,
+                size: 18,
+              ),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              style: IconButton.styleFrom(
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+            ),
+          ),
+          const SizedBox(width: 4),
+        ] else ...<Widget>[
+          const SizedBox(width: 28), // Same width as icon + spacing to maintain alignment
+        ],
         // User content
         Expanded(child: child),
       ],
@@ -100,14 +129,18 @@ class ReorderableTreeListViewItem extends StatelessWidget {
     }
 
     return Material(
-      child: InkWell(
-        onTap: onTap,
-        hoverColor: hoverColor,
-        focusColor: focusColor,
-        splashColor: splashColor,
-        highlightColor: highlightColor,
-        borderRadius: borderRadius is BorderRadius ? borderRadius : null,
-        child: content,
+      child: Semantics(
+        enabled: hasChildren,
+        expanded: hasChildren ? isExpanded : null,
+        child: InkWell(
+          onTap: onTap,
+          hoverColor: hoverColor,
+          focusColor: focusColor,
+          splashColor: splashColor,
+          highlightColor: highlightColor,
+          borderRadius: borderRadius is BorderRadius ? borderRadius : null,
+          child: content,
+        ),
       ),
     );
   }

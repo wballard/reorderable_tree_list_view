@@ -29,7 +29,7 @@ class TreeState {
     // All folders are expanded by default
     for (final TreeNode node in allNodes) {
       if (!node.isLeaf) {
-        _expansionState[node.path] = true;
+        _expandedPaths.add(node.path);
       }
     }
   }
@@ -40,7 +40,12 @@ class TreeState {
   // Private maps for efficient lookups
   final Map<Uri, TreeNode> _nodeMap = <Uri, TreeNode>{};
   final Map<Uri, List<TreeNode>> _childrenMap = <Uri, List<TreeNode>>{};
-  final Map<Uri, bool> _expansionState = <Uri, bool>{};
+  final Set<Uri> _expandedPaths = <Uri>{};
+  
+  /// Set of paths that are currently expanded.
+  /// 
+  /// This allows external code to track which nodes are expanded.
+  Set<Uri> get expandedPaths => Set<Uri>.unmodifiable(_expandedPaths);
   
   /// Gets a node by its path.
   /// 
@@ -70,7 +75,7 @@ class TreeState {
   /// Checks if a folder node is expanded.
   /// 
   /// Always returns true for leaf nodes.
-  bool isExpanded(Uri path) => _expansionState[path] ?? true;
+  bool isExpanded(Uri path) => _expandedPaths.contains(path);
   
   /// Sets the expansion state of a folder node.
   /// 
@@ -78,7 +83,11 @@ class TreeState {
   void setExpanded(Uri path, {required bool expanded}) {
     final TreeNode? node = _nodeMap[path];
     if (node != null && !node.isLeaf) {
-      _expansionState[path] = expanded;
+      if (expanded) {
+        _expandedPaths.add(path);
+      } else {
+        _expandedPaths.remove(path);
+      }
     }
   }
   
@@ -91,18 +100,14 @@ class TreeState {
   
   /// Collapses all folder nodes.
   void collapseAll() {
-    for (final TreeNode node in allNodes) {
-      if (!node.isLeaf) {
-        _expansionState[node.path] = false;
-      }
-    }
+    _expandedPaths.clear();
   }
   
   /// Expands all folder nodes.
   void expandAll() {
     for (final TreeNode node in allNodes) {
       if (!node.isLeaf) {
-        _expansionState[node.path] = true;
+        _expandedPaths.add(node.path);
       }
     }
   }

@@ -9,6 +9,8 @@ import 'package:reorderable_tree_list_view/src/widgets/reorderable_tree_list_vie
 /// 
 /// This widget takes a sparse list of URI paths and automatically generates
 /// a complete tree structure, including intermediate folder nodes.
+/// 
+/// Supports expand/collapse functionality for folder nodes.
 class ReorderableTreeListView extends StatefulWidget {
   /// Creates a ReorderableTreeListView.
   const ReorderableTreeListView({
@@ -22,6 +24,9 @@ class ReorderableTreeListView extends StatefulWidget {
     this.shrinkWrap = false,
     this.padding,
     this.physics,
+    this.expandedByDefault = true,
+    this.initiallyExpanded,
+    this.animateExpansion = true,
   });
   
   /// The sparse list of URI paths to display in the tree.
@@ -53,6 +58,24 @@ class ReorderableTreeListView extends StatefulWidget {
   
   /// How the list view should respond to user input.
   final ScrollPhysics? physics;
+
+  /// Whether folders should be expanded by default.
+  /// 
+  /// If true, all folder nodes start in the expanded state.
+  /// If false, all folder nodes start collapsed.
+  final bool expandedByDefault;
+
+  /// A set of paths that should be initially expanded, regardless of [expandedByDefault].
+  /// 
+  /// If null, uses [expandedByDefault] for all folders.
+  /// If provided, the specified paths will be expanded while others follow [expandedByDefault].
+  final Set<Uri>? initiallyExpanded;
+
+  /// Whether to animate expansion and collapse operations.
+  /// 
+  /// If true, expanding and collapsing folders will be animated.
+  /// If false, changes will be immediate.
+  final bool animateExpansion;
   
   @override
   State<ReorderableTreeListView> createState() => _ReorderableTreeListViewState();
@@ -80,6 +103,18 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
   void _buildTreeState() {
     final List<TreeNode> nodes = TreeBuilder.buildFromPaths(widget.paths);
     _treeState = TreeState(nodes);
+    
+    // Apply expansion settings
+    if (!widget.expandedByDefault) {
+      _treeState.collapseAll();
+    }
+    
+    // Apply initially expanded paths if provided
+    if (widget.initiallyExpanded != null) {
+      for (final Uri path in widget.initiallyExpanded!) {
+        _treeState.setExpanded(path, expanded: true);
+      }
+    }
   }
   
   bool _pathsChanged(List<Uri> oldPaths, List<Uri> newPaths) {
@@ -93,9 +128,15 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
     return !oldSet.containsAll(newSet) || !newSet.containsAll(oldSet);
   }
   
+  void _toggleExpansion(Uri path) {
+    setState(() {
+      _treeState.toggleExpanded(path);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final List<TreeNode> allNodes = _treeState.allNodes;
+    final List<TreeNode> visibleNodes = _treeState.getVisibleNodes();
     
     // Use ReorderableListView for drag-and-drop functionality
     Widget listView = ReorderableListView.builder(
@@ -103,9 +144,11 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
       shrinkWrap: widget.shrinkWrap,
       padding: widget.padding as EdgeInsets?,
       // buildDefaultDragHandles defaults to true, so no need to specify
-      itemCount: allNodes.length,
+      itemCount: visibleNodes.length,
       itemBuilder: (BuildContext context, int index) {
-        final TreeNode node = allNodes[index];
+        final TreeNode node = visibleNodes[index];
+        final bool hasChildren = _treeState.getChildren(node.path).isNotEmpty;
+        final bool isExpanded = _treeState.isExpanded(node.path);
         
         // Get the user-provided content
         final Widget userContent;
@@ -124,6 +167,9 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
         return ReorderableTreeListViewItem(
           key: ValueKey<String>(node.key),
           node: node,
+          hasChildren: hasChildren,
+          isExpanded: isExpanded,
+          onExpansionToggle: hasChildren ? () => _toggleExpansion(node.path) : null,
           child: userContent,
         );
       },
@@ -131,7 +177,7 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
         // Placeholder for proper path recalculation implementation
         // Currently logs debug information for development
         debugPrint('DEBUG: Reorder from $oldIndex to $newIndex');
-        debugPrint('DEBUG: Moving ${allNodes[oldIndex].path} to position $newIndex');
+        debugPrint('DEBUG: Moving ${visibleNodes[oldIndex].path} to position $newIndex');
       },
     );
 
