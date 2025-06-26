@@ -21,11 +21,9 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: samplePaths,
-              itemBuilder: (BuildContext context, Uri path) {
-                return ListTile(
-                  title: Text(path.toString()),
-                );
-              },
+              itemBuilder: (BuildContext context, Uri path) => ListTile(
+                title: Text(path.toString()),
+              ),
             ),
           ),
         ),
@@ -48,12 +46,10 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: samplePaths,
-              itemBuilder: (BuildContext context, Uri path) {
-                return ListTile(
-                  key: ValueKey<String>(path.toString()),
-                  title: Text(path.toString()),
-                );
-              },
+              itemBuilder: (BuildContext context, Uri path) => ListTile(
+                key: ValueKey<String>(path.toString()),
+                title: Text(path.toString()),
+              ),
             ),
           ),
         ),
@@ -70,16 +66,12 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: samplePaths,
-              itemBuilder: (BuildContext context, Uri path) {
-                return ListTile(
-                  title: Text('Leaf: ${path.toString()}'),
-                );
-              },
-              folderBuilder: (BuildContext context, Uri path) {
-                return ListTile(
-                  title: Text('Folder: ${path.toString()}'),
-                );
-              },
+              itemBuilder: (BuildContext context, Uri path) => ListTile(
+                title: Text('Leaf: $path'),
+              ),
+              folderBuilder: (BuildContext context, Uri path) => ListTile(
+                title: Text('Folder: $path'),
+              ),
             ),
           ),
         ),
@@ -95,12 +87,10 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: ReorderableTreeListView(
-              paths: <Uri>[],
-              itemBuilder: (BuildContext context, Uri path) {
-                return ListTile(
-                  title: Text(path.toString()),
-                );
-              },
+              paths: const <Uri>[],
+              itemBuilder: (BuildContext context, Uri path) => ListTile(
+                title: Text(path.toString()),
+              ),
             ),
           ),
         ),
@@ -119,33 +109,27 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
-                return Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: ReorderableTreeListView(
-                        paths: paths,
-                        itemBuilder: (BuildContext context, Uri path) {
-                          return ListTile(
-                            title: Text(path.toString()),
-                          );
-                        },
+              builder: (BuildContext context, StateSetter setState) => Column(
+                children: <Widget>[
+                  Expanded(
+                    child: ReorderableTreeListView(
+                      paths: paths,
+                      itemBuilder: (BuildContext context, Uri path) => ListTile(
+                        title: Text(path.toString()),
                       ),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          paths = <Uri>[
-                            Uri.parse('file://var/test.txt'),
-                            Uri.parse('file://usr/new.txt'),
-                          ];
-                        });
-                      },
-                      child: const Text('Add Path'),
-                    ),
-                  ],
-                );
-              },
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() => paths = <Uri>[
+                          Uri.parse('file://var/test.txt'),
+                          Uri.parse('file://usr/new.txt'),
+                        ]);
+                    },
+                    child: const Text('Add Path'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -172,11 +156,9 @@ void main() {
             body: ReorderableTreeListView(
               paths: samplePaths,
               scrollController: scrollController,
-              itemBuilder: (BuildContext context, Uri path) {
-                return ListTile(
-                  title: Text(path.toString()),
-                );
-              },
+              itemBuilder: (BuildContext context, Uri path) => ListTile(
+                title: Text(path.toString()),
+              ),
             ),
           ),
         ),
@@ -189,7 +171,7 @@ void main() {
     });
     
     testWidgets('applies padding', (WidgetTester tester) async {
-      const EdgeInsets padding = EdgeInsets.all(16.0);
+      const EdgeInsets padding = EdgeInsets.all(16);
       
       await tester.pumpWidget(
         MaterialApp(
@@ -197,11 +179,9 @@ void main() {
             body: ReorderableTreeListView(
               paths: samplePaths,
               padding: padding,
-              itemBuilder: (BuildContext context, Uri path) {
-                return ListTile(
-                  title: Text(path.toString()),
-                );
-              },
+              itemBuilder: (BuildContext context, Uri path) => ListTile(
+                title: Text(path.toString()),
+              ),
             ),
           ),
         ),

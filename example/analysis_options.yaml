@@ -1,1 +1,6 @@
-include: ../analysis_options.yaml
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    # Custom rules for example app
+    public_member_api_docs: false  # Example apps don't need full API docs
