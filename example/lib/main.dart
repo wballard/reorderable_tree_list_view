@@ -44,62 +44,165 @@ class _MyHomePageState extends State<MyHomePage> {
     Uri.parse('file://var/log/system.log'),
   ];
 
+  bool _showConnectors = true;
+  double _indentSize = 32.0;
+  bool _showCustomTheme = false;
+
+  TreeTheme get _currentTheme {
+    if (!_showCustomTheme) {
+      return TreeTheme(
+        indentSize: _indentSize,
+        showConnectors: _showConnectors,
+      );
+    }
+
+    return TreeTheme(
+      indentSize: _indentSize,
+      showConnectors: _showConnectors,
+      connectorColor: Colors.deepPurple.withValues(alpha: 0.6),
+      connectorWidth: 2.0,
+      itemPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+      borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+      hoverColor: Colors.deepPurple.withValues(alpha: 0.04),
+      focusColor: Colors.deepPurple.withValues(alpha: 0.12),
+      splashColor: Colors.deepPurple.withValues(alpha: 0.08),
+      highlightColor: Colors.deepPurple.withValues(alpha: 0.04),
+    );
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('ReorderableTreeListView Demo'),
       ),
-      body: ReorderableTreeListView(
-        paths: paths,
-        padding: const EdgeInsets.all(8),
-        itemBuilder: (BuildContext context, Uri path) {
-          final String displayName = TreePath.getDisplayName(path);
-          
-          return Card(
-            margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-            child: ListTile(
-              leading: const Icon(Icons.insert_drive_file, color: Colors.blue),
-              title: Text(
-                displayName,
-                style: const TextStyle(fontWeight: FontWeight.normal),
+      body: Column(
+        children: [
+          // Theme Controls
+          Card(
+            margin: const EdgeInsets.all(8.0),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Theme Controls',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SwitchListTile(
+                          title: const Text('Show Connectors'),
+                          value: _showConnectors,
+                          onChanged: (value) => setState(() => _showConnectors = value),
+                          dense: true,
+                        ),
+                      ),
+                      Expanded(
+                        child: SwitchListTile(
+                          title: const Text('Custom Theme'),
+                          value: _showCustomTheme,
+                          onChanged: (value) => setState(() => _showCustomTheme = value),
+                          dense: true,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Text('Indent Size:'),
+                      Expanded(
+                        child: Slider(
+                          value: _indentSize,
+                          min: 16.0,
+                          max: 64.0,
+                          divisions: 12,
+                          label: _indentSize.round().toString(),
+                          onChanged: (value) => setState(() => _indentSize = value),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              subtitle: Text(
-                path.toString(),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey[600],
-                ),
-              ),
-              dense: true,
             ),
-          );
-        },
-        folderBuilder: (BuildContext context, Uri path) {
-          final String displayName = TreePath.getDisplayName(path);
-          final int depth = TreePath.calculateDepth(path);
-          
-          return Card(
-            margin: EdgeInsets.only(
-              left: depth * 16,
-              right: 8,
-              top: 4,
-              bottom: 4,
+          ),
+          // Tree View
+          Expanded(
+            child: ReorderableTreeListView(
+              paths: paths,
+              theme: _currentTheme,
+              padding: const EdgeInsets.all(8),
+              itemBuilder: (BuildContext context, Uri path) {
+                final String displayName = TreePath.getDisplayName(path);
+                
+                return Row(
+                  children: [
+                    Icon(
+                      Icons.insert_drive_file,
+                      color: _showCustomTheme ? Colors.deepPurple : Colors.blue,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            displayName,
+                            style: const TextStyle(fontWeight: FontWeight.normal),
+                          ),
+                          Text(
+                            path.toString(),
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
+              folderBuilder: (BuildContext context, Uri path) {
+                final String displayName = TreePath.getDisplayName(path);
+                
+                return Row(
+                  children: [
+                    Icon(
+                      Icons.folder,
+                      color: _showCustomTheme ? Colors.deepPurple.shade300 : Colors.amber,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            displayName,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            path.toString(),
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
-            color: Theme.of(context).colorScheme.secondaryContainer,
-            child: ListTile(
-              leading: const Icon(Icons.folder),
-              title: Text(
-                displayName,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: Text(
-                path.toString(),
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              dense: true,
-            ),
-          );
-        },
+          ),
+        ],
       ),
     );
 }

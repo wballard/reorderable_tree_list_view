@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:reorderable_tree_list_view/src/core/tree_builder.dart';
 import 'package:reorderable_tree_list_view/src/core/tree_state.dart';
 import 'package:reorderable_tree_list_view/src/models/tree_node.dart';
+import 'package:reorderable_tree_list_view/src/theme/tree_theme.dart';
 import 'package:reorderable_tree_list_view/src/widgets/reorderable_tree_list_view_item.dart';
 
 /// A reorderable list view that displays hierarchical tree data.
@@ -14,6 +15,7 @@ class ReorderableTreeListView extends StatefulWidget {
     required this.paths,
     required this.itemBuilder,
     super.key,
+    this.theme,
     this.folderBuilder,
     this.scrollController,
     this.scrollDirection = Axis.vertical,
@@ -24,6 +26,12 @@ class ReorderableTreeListView extends StatefulWidget {
   
   /// The sparse list of URI paths to display in the tree.
   final List<Uri> paths;
+
+  /// Optional theme configuration for the tree view.
+  /// 
+  /// If provided, this theme will be applied to all tree items via TreeThemeData.
+  /// If not provided, items will use the default theme or inherit from an ancestor TreeThemeData.
+  final TreeTheme? theme;
   
   /// Builds widgets for leaf nodes (files).
   final Widget Function(BuildContext context, Uri path) itemBuilder;
@@ -90,7 +98,7 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
     final List<TreeNode> allNodes = _treeState.allNodes;
     
     // Use ReorderableListView for drag-and-drop functionality
-    return ReorderableListView.builder(
+    Widget listView = ReorderableListView.builder(
       scrollDirection: widget.scrollDirection,
       shrinkWrap: widget.shrinkWrap,
       padding: widget.padding as EdgeInsets?,
@@ -126,5 +134,15 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
         debugPrint('DEBUG: Moving ${allNodes[oldIndex].path} to position $newIndex');
       },
     );
+
+    // Wrap with TreeThemeData if a theme is provided
+    if (widget.theme != null) {
+      listView = TreeThemeData(
+        theme: widget.theme!,
+        child: listView,
+      );
+    }
+
+    return listView;
   }
 }

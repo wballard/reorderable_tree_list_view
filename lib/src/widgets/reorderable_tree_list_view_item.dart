@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:reorderable_tree_list_view/src/models/tree_node.dart';
+import 'package:reorderable_tree_list_view/src/theme/tree_theme.dart';
+import 'package:reorderable_tree_list_view/src/widgets/tree_connector_painter.dart';
 
 /// A widget that wraps content for display in a ReorderableTreeListView.
 /// 
 /// This widget provides:
-/// - Proper indentation based on tree depth
-/// - Material Design compliance with InkWell feedback
+/// - Proper indentation based on tree depth with visual tree connectors
+/// - Material Design compliance with InkWell feedback and theming
 /// - Consistent layout structure for tree items
+/// - Integration with TreeTheme for customizable appearance
 class ReorderableTreeListViewItem extends StatelessWidget {
   /// Creates a ReorderableTreeListViewItem.
   const ReorderableTreeListViewItem({
@@ -14,6 +17,11 @@ class ReorderableTreeListViewItem extends StatelessWidget {
     required this.child,
     super.key,
     this.indentWidth = 24,
+    this.hasChildren = false,
+    this.isExpanded = false,
+    this.isLastInLevel = false,
+    this.parentConnections = const <bool>[],
+    this.onTap,
   });
   
   /// The tree node data that determines depth and other properties.
@@ -23,19 +31,84 @@ class ReorderableTreeListViewItem extends StatelessWidget {
   final Widget child;
   
   /// The width in pixels for each level of indentation.
+  /// 
+  /// This is used as a fallback when no TreeTheme is available.
   final double indentWidth;
+
+  /// Whether this node has children.
+  final bool hasChildren;
+
+  /// Whether this node is expanded (only relevant if hasChildren is true).
+  final bool isExpanded;
+
+  /// Whether this is the last node at its level.
+  final bool isLastInLevel;
+
+  /// List of booleans indicating which parent levels have more siblings.
+  final List<bool> parentConnections;
+
+  /// Callback for when the item is tapped.
+  final VoidCallback? onTap;
   
   @override
-  Widget build(BuildContext context) => Material(
-    child: InkWell(
-      child: Row(
-        children: <Widget>[
-          // Indentation based on depth
-          SizedBox(width: node.depth * indentWidth),
-          // User content
-          Expanded(child: child),
-        ],
+  Widget build(BuildContext context) {
+    final TreeTheme? theme = TreeTheme.maybeOf(context);
+    final ThemeData materialTheme = Theme.of(context);
+    
+    // Use TreeTheme values if available, fallback to defaults or Material theme
+    final double indentSize = theme?.indentSize ?? indentWidth;
+    final bool showConnectors = theme?.showConnectors ?? false;
+    final bool connectors = showConnectors && node.depth > 0;
+    final EdgeInsetsGeometry padding = theme?.itemPadding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 8);
+    final BorderRadiusGeometry borderRadius = theme?.borderRadius ?? BorderRadius.zero;
+    
+    // Material Design colors with TreeTheme override
+    final Color hoverColor = theme?.hoverColor ?? materialTheme.hoverColor;
+    final Color focusColor = theme?.focusColor ?? materialTheme.focusColor;
+    final Color splashColor = theme?.splashColor ?? materialTheme.splashColor;
+    final Color highlightColor = theme?.highlightColor ?? materialTheme.highlightColor;
+
+    Widget content = Row(
+      children: <Widget>[
+        // Indentation and connector lines
+        SizedBox(
+          width: node.depth * indentSize,
+          child: connectors ? CustomPaint(
+            painter: TreeConnectorPainter(
+              depth: node.depth,
+              indentSize: indentSize,
+              connectorColor: theme?.connectorColor ?? Colors.grey,
+              connectorWidth: theme?.connectorWidth ?? 1,
+              hasChildren: hasChildren,
+              isExpanded: isExpanded,
+              isLastInLevel: isLastInLevel,
+              parentConnections: parentConnections,
+            ),
+          ) : const SizedBox.shrink(),
+        ),
+        // User content
+        Expanded(child: child),
+      ],
+    );
+
+    // Wrap in padding if specified
+    if (padding != EdgeInsets.zero) {
+      content = Padding(
+        padding: padding,
+        child: content,
+      );
+    }
+
+    return Material(
+      child: InkWell(
+        onTap: onTap,
+        hoverColor: hoverColor,
+        focusColor: focusColor,
+        splashColor: splashColor,
+        highlightColor: highlightColor,
+        borderRadius: borderRadius is BorderRadius ? borderRadius : null,
+        child: content,
       ),
-    ),
-  );
+    );
+  }
 }
