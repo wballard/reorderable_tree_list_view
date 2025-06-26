@@ -1,2 +1,5 @@
 // Export all public APIs from the package
-// TODO(developer): Add exports as we implement features
+
+// Models
+export 'src/models/tree_node.dart';
+export 'src/models/tree_path.dart';
