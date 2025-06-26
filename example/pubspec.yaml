@@ -11,6 +11,7 @@ dependencies:
     sdk: flutter
   reorderable_tree_list_view:
     path: ../
+  storybook_flutter: ^0.14.1
 
 dev_dependencies:
   flutter_test:
@@ -19,3 +20,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+# Web deployment configuration
+# To build for web: flutter build web --web-renderer html
+# Deploy to GitHub Pages by copying build/web/* to gh-pages branch
