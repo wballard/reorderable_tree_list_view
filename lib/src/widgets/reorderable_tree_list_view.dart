@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:reorderable_tree_list_view/src/core/tree_builder.dart';
 import 'package:reorderable_tree_list_view/src/core/tree_state.dart';
 import 'package:reorderable_tree_list_view/src/models/tree_node.dart';
+import 'package:reorderable_tree_list_view/src/widgets/reorderable_tree_list_view_item.dart';
 
 /// A reorderable list view that displays hierarchical tree data.
 /// 
@@ -108,16 +109,25 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
         // Adjust index for actual nodes
         final TreeNode node = allNodes[index - 1];
         
+        // Get the user-provided content
+        final Widget userContent;
         if (node.isLeaf) {
-          return widget.itemBuilder(context, node.path);
+          userContent = widget.itemBuilder(context, node.path);
         } else {
           // Use folder builder if provided, otherwise use item builder
           if (widget.folderBuilder != null) {
-            return widget.folderBuilder!(context, node.path);
+            userContent = widget.folderBuilder!(context, node.path);
           } else {
-            return widget.itemBuilder(context, node.path);
+            userContent = widget.itemBuilder(context, node.path);
           }
         }
+        
+        // Wrap with ReorderableTreeListViewItem for proper indentation and styling
+        return ReorderableTreeListViewItem(
+          key: ValueKey<String>(node.key),
+          node: node,
+          child: userContent,
+        );
       },
     );
   }

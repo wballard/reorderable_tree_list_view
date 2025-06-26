@@ -10,3 +10,4 @@ export 'src/models/tree_path.dart';
 
 // Widgets
 export 'src/widgets/reorderable_tree_list_view.dart';
+export 'src/widgets/reorderable_tree_list_view_item.dart';

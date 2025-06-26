@@ -55,21 +55,20 @@ class _MyHomePageState extends State<MyHomePage> {
         padding: const EdgeInsets.all(8),
         itemBuilder: (BuildContext context, Uri path) {
           final String displayName = TreePath.getDisplayName(path);
-          final int depth = TreePath.calculateDepth(path);
           
           return Card(
-            margin: EdgeInsets.only(
-              left: depth * 16,
-              right: 8,
-              top: 4,
-              bottom: 4,
-            ),
+            margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
             child: ListTile(
-              leading: const Icon(Icons.insert_drive_file),
-              title: Text(displayName),
+              leading: const Icon(Icons.insert_drive_file, color: Colors.blue),
+              title: Text(
+                displayName,
+                style: const TextStyle(fontWeight: FontWeight.normal),
+              ),
               subtitle: Text(
                 path.toString(),
-                style: Theme.of(context).textTheme.bodySmall,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Colors.grey[600],
+                ),
               ),
               dense: true,
             ),
