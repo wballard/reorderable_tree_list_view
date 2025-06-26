@@ -89,25 +89,15 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
   Widget build(BuildContext context) {
     final List<TreeNode> allNodes = _treeState.allNodes;
     
-    // Use ListView directly with a header as the first item
-    return ListView.builder(
-      controller: widget.scrollController,
+    // Use ReorderableListView for drag-and-drop functionality
+    return ReorderableListView.builder(
       scrollDirection: widget.scrollDirection,
       shrinkWrap: widget.shrinkWrap,
-      padding: widget.padding,
-      physics: widget.physics,
-      itemCount: allNodes.length + 1, // +1 for the header
+      padding: widget.padding as EdgeInsets?,
+      // buildDefaultDragHandles defaults to true, so no need to specify
+      itemCount: allNodes.length,
       itemBuilder: (BuildContext context, int index) {
-        // First item is the header
-        if (index == 0) {
-          return Padding(
-            padding: const EdgeInsets.all(8),
-            child: Text('Tree with ${allNodes.length} nodes'),
-          );
-        }
-        
-        // Adjust index for actual nodes
-        final TreeNode node = allNodes[index - 1];
+        final TreeNode node = allNodes[index];
         
         // Get the user-provided content
         final Widget userContent;
@@ -128,6 +118,12 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
           node: node,
           child: userContent,
         );
+      },
+      onReorder: (int oldIndex, int newIndex) {
+        // Placeholder for proper path recalculation implementation
+        // Currently logs debug information for development
+        debugPrint('DEBUG: Reorder from $oldIndex to $newIndex');
+        debugPrint('DEBUG: Moving ${allNodes[oldIndex].path} to position $newIndex');
       },
     );
   }

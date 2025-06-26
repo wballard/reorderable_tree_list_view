@@ -32,12 +32,12 @@ void main() {
       // Widget should build without errors
       expect(find.byType(ReorderableTreeListView), findsOneWidget);
       
-      // Should show text with node count
+      // Should show all tree items
       // Expected nodes: file://, file://var, file://var/data, 
       // file://var/data/readme.txt, file://var/data/info.txt,
       // file://var/config.json, file://usr, file://usr/bin,
       // file://usr/bin/app = 9 nodes
-      expect(find.text('Tree with 9 nodes'), findsOneWidget);
+      expect(find.byType(ReorderableTreeListViewItem), findsNWidgets(9));
     });
     
     testWidgets('shows all paths in temporary ListView', (WidgetTester tester) async {
@@ -97,7 +97,7 @@ void main() {
       );
       
       expect(find.byType(ReorderableTreeListView), findsOneWidget);
-      expect(find.text('Tree with 0 nodes'), findsOneWidget);
+      expect(find.byType(ReorderableTreeListViewItem), findsNothing);
     });
     
     testWidgets('rebuilds when paths change', (WidgetTester tester) async {
@@ -136,7 +136,7 @@ void main() {
       );
       
       // Initially should have 3 nodes (file://, file://var, file://var/test.txt)
-      expect(find.text('Tree with 3 nodes'), findsOneWidget);
+      expect(find.byType(ReorderableTreeListViewItem), findsNWidgets(3));
       
       // Add a new path
       await tester.tap(find.text('Add Path'));
@@ -144,7 +144,7 @@ void main() {
       
       // Now should have 5 nodes (file://, file://var, file://var/test.txt,
       // file://usr, file://usr/new.txt)
-      expect(find.text('Tree with 5 nodes'), findsOneWidget);
+      expect(find.byType(ReorderableTreeListViewItem), findsNWidgets(5));
     });
     
     testWidgets('accepts scroll controller', (WidgetTester tester) async {
@@ -187,12 +187,12 @@ void main() {
         ),
       );
       
-      // Find the ListView and check its padding
-      final Finder listViewFinder = find.byType(ListView);
-      expect(listViewFinder, findsOneWidget);
+      // Find the ReorderableListView and check its padding
+      final Finder reorderableListViewFinder = find.byType(ReorderableListView);
+      expect(reorderableListViewFinder, findsOneWidget);
       
-      final ListView listView = tester.widget<ListView>(listViewFinder);
-      expect(listView.padding, equals(padding));
+      final ReorderableListView reorderableListView = tester.widget<ReorderableListView>(reorderableListViewFinder);
+      expect(reorderableListView.padding, equals(padding));
     });
   });
 }
