@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// A custom painter that draws tree connector lines.
-/// 
+///
 /// This painter draws vertical and horizontal lines to visually connect
 /// tree nodes and show the hierarchical structure.
 class TreeConnectorPainter extends CustomPainter {
@@ -60,23 +60,15 @@ class TreeConnectorPainter extends CustomPainter {
     for (int i = 0; i < parentConnections.length && i < depth - 1; i++) {
       if (parentConnections[i]) {
         final double x = (i + 1) * indentSize + halfIndent;
-        canvas.drawLine(
-          Offset(x, 0),
-          Offset(x, size.height),
-          paint,
-        );
+        canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
       }
     }
 
     // Draw lines for current level
     final double currentX = depth * indentSize + halfIndent;
-    
+
     // Vertical line from top to center (unless this is the first child)
-    canvas.drawLine(
-      Offset(currentX, 0),
-      Offset(currentX, centerY),
-      paint,
-    );
+    canvas.drawLine(Offset(currentX, 0), Offset(currentX, centerY), paint);
 
     // Vertical line from center to bottom (if not the last child)
     if (!isLastInLevel) {
@@ -105,14 +97,15 @@ class TreeConnectorPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(TreeConnectorPainter oldDelegate) => depth != oldDelegate.depth ||
-        indentSize != oldDelegate.indentSize ||
-        connectorColor != oldDelegate.connectorColor ||
-        connectorWidth != oldDelegate.connectorWidth ||
-        hasChildren != oldDelegate.hasChildren ||
-        isExpanded != oldDelegate.isExpanded ||
-        isLastInLevel != oldDelegate.isLastInLevel ||
-        !_listEquals(parentConnections, oldDelegate.parentConnections);
+  bool shouldRepaint(TreeConnectorPainter oldDelegate) =>
+      depth != oldDelegate.depth ||
+      indentSize != oldDelegate.indentSize ||
+      connectorColor != oldDelegate.connectorColor ||
+      connectorWidth != oldDelegate.connectorWidth ||
+      hasChildren != oldDelegate.hasChildren ||
+      isExpanded != oldDelegate.isExpanded ||
+      isLastInLevel != oldDelegate.isLastInLevel ||
+      !_listEquals(parentConnections, oldDelegate.parentConnections);
 
   bool _listEquals<T>(List<T> a, List<T> b) {
     if (a.length != b.length) {

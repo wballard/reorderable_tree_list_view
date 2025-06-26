@@ -27,13 +27,13 @@ void main() {
 
       test('should track expanded paths when toggling', () {
         final Uri child1Path = Uri.parse('file://root/child1');
-        // child1 should be expanded by default  
+        // child1 should be expanded by default
         expect(treeState.expandedPaths.contains(child1Path), isTrue);
-        
+
         // Toggle to collapse
         treeState.toggleExpanded(child1Path);
         expect(treeState.expandedPaths.contains(child1Path), isFalse);
-        
+
         // Toggle to expand again
         treeState.toggleExpanded(child1Path);
         expect(treeState.expandedPaths.contains(child1Path), isTrue);
@@ -43,9 +43,15 @@ void main() {
         // file://, file://root, and file://root/child1 start expanded by default
         expect(treeState.expandedPaths.length, equals(3));
         expect(treeState.expandedPaths.contains(Uri.parse('file://')), isTrue);
-        expect(treeState.expandedPaths.contains(Uri.parse('file://root')), isTrue);
-        expect(treeState.expandedPaths.contains(Uri.parse('file://root/child1')), isTrue);
-        
+        expect(
+          treeState.expandedPaths.contains(Uri.parse('file://root')),
+          isTrue,
+        );
+        expect(
+          treeState.expandedPaths.contains(Uri.parse('file://root/child1')),
+          isTrue,
+        );
+
         // child2 is a leaf so toggling it has no effect
         treeState.toggleExpanded(Uri.parse('file://root/child2'));
         expect(treeState.expandedPaths.length, equals(3));
@@ -73,22 +79,28 @@ void main() {
         // First collapse everything
         treeState.collapseAll();
         expect(treeState.expandedPaths, isEmpty);
-        
+
         // Then expand all
         treeState.expandAll();
-        
+
         expect(treeState.isExpanded(Uri.parse('file://')), isTrue);
         expect(treeState.isExpanded(Uri.parse('file://root')), isTrue);
         expect(treeState.isExpanded(Uri.parse('file://root/child1')), isTrue);
-        expect(treeState.isExpanded(Uri.parse('file://root/child2')), isFalse); // No children
-        expect(treeState.isExpanded(Uri.parse('file://root/child1/grandchild1')), isFalse); // No children
+        expect(
+          treeState.isExpanded(Uri.parse('file://root/child2')),
+          isFalse,
+        ); // No children
+        expect(
+          treeState.isExpanded(Uri.parse('file://root/child1/grandchild1')),
+          isFalse,
+        ); // No children
       });
     });
 
     group('collapseAll', () {
       test('should collapse all nodes', () {
         treeState.collapseAll();
-        
+
         expect(treeState.expandedPaths, isEmpty);
         expect(treeState.isExpanded(Uri.parse('file://')), isFalse);
         expect(treeState.isExpanded(Uri.parse('file://root/child1')), isFalse);
@@ -108,7 +120,7 @@ void main() {
           ..collapseAll()
           ..setExpanded(Uri.parse('file://'), expanded: true);
         final List<TreeNode> visibleNodes = treeState.getVisibleNodes();
-        
+
         expect(visibleNodes.length, equals(2));
         expect(visibleNodes[0].displayName, equals('file://'));
         expect(visibleNodes[1].displayName, equals('root'));
@@ -121,7 +133,7 @@ void main() {
           ..setExpanded(Uri.parse('file://root'), expanded: true)
           ..setExpanded(Uri.parse('file://root/child1'), expanded: true);
         final List<TreeNode> visibleNodes = treeState.getVisibleNodes();
-        
+
         expect(visibleNodes.length, equals(6));
         expect(visibleNodes[0].displayName, equals('file://'));
         expect(visibleNodes[1].displayName, equals('root'));
@@ -140,12 +152,13 @@ void main() {
           // Collapse child1
           ..setExpanded(Uri.parse('file://root/child1'), expanded: false);
         final List<TreeNode> visibleNodes = treeState.getVisibleNodes();
-        
+
         expect(visibleNodes.length, equals(4));
-        expect(visibleNodes.map((TreeNode n) => n.displayName).toList(),
-            equals(<String>['file://', 'root', 'child1', 'child2']));
+        expect(
+          visibleNodes.map((TreeNode n) => n.displayName).toList(),
+          equals(<String>['file://', 'root', 'child1', 'child2']),
+        );
       });
     });
-
   });
 }

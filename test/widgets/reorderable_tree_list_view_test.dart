@@ -5,7 +5,7 @@ import 'package:reorderable_tree_list_view/reorderable_tree_list_view.dart';
 void main() {
   group('ReorderableTreeListView', () {
     late List<Uri> samplePaths;
-    
+
     setUp(() {
       samplePaths = <Uri>[
         Uri.parse('file://var/data/readme.txt'),
@@ -14,33 +14,36 @@ void main() {
         Uri.parse('file://usr/bin/app'),
       ];
     });
-    
-    testWidgets('creates widget with sample paths', (WidgetTester tester) async {
+
+    testWidgets('creates widget with sample paths', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: samplePaths,
-              itemBuilder: (BuildContext context, Uri path) => ListTile(
-                title: Text(path.toString()),
-              ),
+              itemBuilder: (BuildContext context, Uri path) =>
+                  ListTile(title: Text(path.toString())),
             ),
           ),
         ),
       );
-      
+
       // Widget should build without errors
       expect(find.byType(ReorderableTreeListView), findsOneWidget);
-      
+
       // Should show all tree items
-      // Expected nodes: file://, file://var, file://var/data, 
+      // Expected nodes: file://, file://var, file://var/data,
       // file://var/data/readme.txt, file://var/data/info.txt,
       // file://var/config.json, file://usr, file://usr/bin,
       // file://usr/bin/app = 9 nodes
       expect(find.byType(ReorderableTreeListViewItem), findsNWidgets(9));
     });
-    
-    testWidgets('shows all paths in temporary ListView', (WidgetTester tester) async {
+
+    testWidgets('shows all paths in temporary ListView', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -54,57 +57,54 @@ void main() {
           ),
         ),
       );
-      
+
       // Should show all nodes (including generated intermediate ones)
       // The ListView has 10 items: 1 header + 9 tree nodes
       expect(find.byType(ListTile), findsNWidgets(9));
     });
-    
-    testWidgets('uses custom folder builder when provided', (WidgetTester tester) async {
+
+    testWidgets('uses custom folder builder when provided', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: samplePaths,
-              itemBuilder: (BuildContext context, Uri path) => ListTile(
-                title: Text('Leaf: $path'),
-              ),
-              folderBuilder: (BuildContext context, Uri path) => ListTile(
-                title: Text('Folder: $path'),
-              ),
+              itemBuilder: (BuildContext context, Uri path) =>
+                  ListTile(title: Text('Leaf: $path')),
+              folderBuilder: (BuildContext context, Uri path) =>
+                  ListTile(title: Text('Folder: $path')),
             ),
           ),
         ),
       );
-      
+
       // Should have both folder and leaf items
       expect(find.textContaining('Folder:'), findsWidgets);
       expect(find.textContaining('Leaf:'), findsWidgets);
     });
-    
+
     testWidgets('handles empty path list', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: const <Uri>[],
-              itemBuilder: (BuildContext context, Uri path) => ListTile(
-                title: Text(path.toString()),
-              ),
+              itemBuilder: (BuildContext context, Uri path) =>
+                  ListTile(title: Text(path.toString())),
             ),
           ),
         ),
       );
-      
+
       expect(find.byType(ReorderableTreeListView), findsOneWidget);
       expect(find.byType(ReorderableTreeListViewItem), findsNothing);
     });
-    
+
     testWidgets('rebuilds when paths change', (WidgetTester tester) async {
-      List<Uri> paths = <Uri>[
-        Uri.parse('file://var/test.txt'),
-      ];
-      
+      List<Uri> paths = <Uri>[Uri.parse('file://var/test.txt')];
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -114,17 +114,18 @@ void main() {
                   Expanded(
                     child: ReorderableTreeListView(
                       paths: paths,
-                      itemBuilder: (BuildContext context, Uri path) => ListTile(
-                        title: Text(path.toString()),
-                      ),
+                      itemBuilder: (BuildContext context, Uri path) =>
+                          ListTile(title: Text(path.toString())),
                     ),
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      setState(() => paths = <Uri>[
+                      setState(
+                        () => paths = <Uri>[
                           Uri.parse('file://var/test.txt'),
                           Uri.parse('file://usr/new.txt'),
-                        ]);
+                        ],
+                      );
                     },
                     child: const Text('Add Path'),
                   ),
@@ -134,64 +135,63 @@ void main() {
           ),
         ),
       );
-      
+
       // Initially should have 3 nodes (file://, file://var, file://var/test.txt)
       expect(find.byType(ReorderableTreeListViewItem), findsNWidgets(3));
-      
+
       // Add a new path
       await tester.tap(find.text('Add Path'));
       await tester.pump();
-      
+
       // Now should have 5 nodes (file://, file://var, file://var/test.txt,
       // file://usr, file://usr/new.txt)
       expect(find.byType(ReorderableTreeListViewItem), findsNWidgets(5));
     });
-    
+
     testWidgets('accepts scroll controller', (WidgetTester tester) async {
       final ScrollController scrollController = ScrollController();
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: samplePaths,
               scrollController: scrollController,
-              itemBuilder: (BuildContext context, Uri path) => ListTile(
-                title: Text(path.toString()),
-              ),
+              itemBuilder: (BuildContext context, Uri path) =>
+                  ListTile(title: Text(path.toString())),
             ),
           ),
         ),
       );
-      
+
       expect(find.byType(ReorderableTreeListView), findsOneWidget);
-      
+
       // Clean up
       scrollController.dispose();
     });
-    
+
     testWidgets('applies padding', (WidgetTester tester) async {
       const EdgeInsets padding = EdgeInsets.all(16);
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: samplePaths,
               padding: padding,
-              itemBuilder: (BuildContext context, Uri path) => ListTile(
-                title: Text(path.toString()),
-              ),
+              itemBuilder: (BuildContext context, Uri path) =>
+                  ListTile(title: Text(path.toString())),
             ),
           ),
         ),
       );
-      
+
       // Find the ReorderableListView and check its padding
       final Finder reorderableListViewFinder = find.byType(ReorderableListView);
       expect(reorderableListViewFinder, findsOneWidget);
-      
-      final ReorderableListView reorderableListView = tester.widget<ReorderableListView>(reorderableListViewFinder);
+
+      final ReorderableListView reorderableListView = tester
+          .widget<ReorderableListView>(reorderableListViewFinder);
       expect(reorderableListView.padding, equals(padding));
     });
   });

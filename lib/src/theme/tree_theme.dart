@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Theme configuration for the tree list view.
-/// 
+///
 /// This class defines the visual appearance of tree items including indentation,
 /// connectors, colors, and Material Design integration.
 @immutable
@@ -22,10 +22,11 @@ class TreeTheme {
   });
 
   /// Factory constructor that returns the theme from the closest [TreeThemeData] ancestor.
-  /// 
+  ///
   /// If no [TreeThemeData] is found, returns a default theme.
   factory TreeTheme.of(BuildContext context) {
-    final TreeThemeData? data = context.dependOnInheritedWidgetOfExactType<TreeThemeData>();
+    final TreeThemeData? data = context
+        .dependOnInheritedWidgetOfExactType<TreeThemeData>();
     return data?.theme ?? const TreeTheme();
   }
 
@@ -63,10 +64,11 @@ class TreeTheme {
   final Color? highlightColor;
 
   /// Returns the theme from the closest [TreeThemeData] ancestor, if any.
-  /// 
+  ///
   /// If no [TreeThemeData] is found, returns null.
   static TreeTheme? maybeOf(BuildContext context) {
-    final TreeThemeData? data = context.dependOnInheritedWidgetOfExactType<TreeThemeData>();
+    final TreeThemeData? data = context
+        .dependOnInheritedWidgetOfExactType<TreeThemeData>();
     return data?.theme;
   }
 
@@ -84,25 +86,25 @@ class TreeTheme {
     Color? splashColor,
     Color? highlightColor,
   }) => TreeTheme(
-      indentSize: indentSize ?? this.indentSize,
-      connectorColor: connectorColor ?? this.connectorColor,
-      connectorWidth: connectorWidth ?? this.connectorWidth,
-      showConnectors: showConnectors ?? this.showConnectors,
-      expandIconSize: expandIconSize ?? this.expandIconSize,
-      itemPadding: itemPadding ?? this.itemPadding,
-      borderRadius: borderRadius ?? this.borderRadius,
-      hoverColor: hoverColor ?? this.hoverColor,
-      focusColor: focusColor ?? this.focusColor,
-      splashColor: splashColor ?? this.splashColor,
-      highlightColor: highlightColor ?? this.highlightColor,
-    );
+    indentSize: indentSize ?? this.indentSize,
+    connectorColor: connectorColor ?? this.connectorColor,
+    connectorWidth: connectorWidth ?? this.connectorWidth,
+    showConnectors: showConnectors ?? this.showConnectors,
+    expandIconSize: expandIconSize ?? this.expandIconSize,
+    itemPadding: itemPadding ?? this.itemPadding,
+    borderRadius: borderRadius ?? this.borderRadius,
+    hoverColor: hoverColor ?? this.hoverColor,
+    focusColor: focusColor ?? this.focusColor,
+    splashColor: splashColor ?? this.splashColor,
+    highlightColor: highlightColor ?? this.highlightColor,
+  );
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) {
       return true;
     }
-    
+
     return other is TreeTheme &&
         other.indentSize == indentSize &&
         other.connectorColor == connectorColor &&
@@ -119,28 +121,24 @@ class TreeTheme {
 
   @override
   int get hashCode => Object.hash(
-      indentSize,
-      connectorColor,
-      connectorWidth,
-      showConnectors,
-      expandIconSize,
-      itemPadding,
-      borderRadius,
-      hoverColor,
-      focusColor,
-      splashColor,
-      highlightColor,
-    );
+    indentSize,
+    connectorColor,
+    connectorWidth,
+    showConnectors,
+    expandIconSize,
+    itemPadding,
+    borderRadius,
+    hoverColor,
+    focusColor,
+    splashColor,
+    highlightColor,
+  );
 }
 
 /// An [InheritedWidget] that provides a [TreeTheme] to its descendants.
 class TreeThemeData extends InheritedWidget {
   /// Creates a tree theme data widget.
-  const TreeThemeData({
-    required this.theme,
-    required super.child,
-    super.key,
-  });
+  const TreeThemeData({required this.theme, required super.child, super.key});
 
   /// The tree theme configuration.
   final TreeTheme theme;

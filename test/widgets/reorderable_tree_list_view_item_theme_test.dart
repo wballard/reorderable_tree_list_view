@@ -4,7 +4,9 @@ import 'package:reorderable_tree_list_view/reorderable_tree_list_view.dart';
 
 void main() {
   group('ReorderableTreeListViewItem Theme Integration', () {
-    testWidgets('should use default theme when no TreeTheme provided', (WidgetTester tester) async {
+    testWidgets('should use default theme when no TreeTheme provided', (
+      WidgetTester tester,
+    ) async {
       final TreeNode node = TreeNode(
         path: Uri.parse('file://folder/subfolder/test.txt'),
         isLeaf: true,
@@ -22,11 +24,15 @@ void main() {
       );
 
       // Should use default indentation (depth is 3 for file://folder/subfolder/test.txt)
-      final SizedBox sizedBox = tester.widget<SizedBox>(find.byType(SizedBox).first);
+      final SizedBox sizedBox = tester.widget<SizedBox>(
+        find.byType(SizedBox).first,
+      );
       expect(sizedBox.width, equals(3 * 24)); // depth * default indentSize
     });
 
-    testWidgets('should use TreeTheme when provided', (WidgetTester tester) async {
+    testWidgets('should use TreeTheme when provided', (
+      WidgetTester tester,
+    ) async {
       final TreeNode node = TreeNode(
         path: Uri.parse('file://folder/subfolder/test.txt'),
         isLeaf: true,
@@ -53,19 +59,28 @@ void main() {
       );
 
       // Should use theme's indentation (depth is 3 for file://folder/subfolder/test.txt)
-      final SizedBox sizedBox = tester.widget<SizedBox>(find.byType(SizedBox).first);
+      final SizedBox sizedBox = tester.widget<SizedBox>(
+        find.byType(SizedBox).first,
+      );
       expect(sizedBox.width, equals(3 * 48)); // depth * theme indentSize
 
       // Should have proper padding
-      final Padding padding = tester.widget<Padding>(find.byType(Padding).first);
+      final Padding padding = tester.widget<Padding>(
+        find.byType(Padding).first,
+      );
       expect(padding.padding, equals(const EdgeInsets.all(16)));
 
       // Should have proper border radius
       final InkWell inkWell = tester.widget<InkWell>(find.byType(InkWell));
-      expect(inkWell.borderRadius, equals(const BorderRadius.all(Radius.circular(8))));
+      expect(
+        inkWell.borderRadius,
+        equals(const BorderRadius.all(Radius.circular(8))),
+      );
     });
 
-    testWidgets('should show connector lines when enabled', (WidgetTester tester) async {
+    testWidgets('should show connector lines when enabled', (
+      WidgetTester tester,
+    ) async {
       final TreeNode node = TreeNode(
         path: Uri.parse('file://folder/subfolder/test.txt'),
         isLeaf: true,
@@ -105,7 +120,9 @@ void main() {
       expect(hasTreeConnectorPainter, isTrue);
     });
 
-    testWidgets('should hide connector lines when disabled', (WidgetTester tester) async {
+    testWidgets('should hide connector lines when disabled', (
+      WidgetTester tester,
+    ) async {
       final TreeNode node = TreeNode(
         path: Uri.parse('file://folder/subfolder/test.txt'),
         isLeaf: true,
@@ -142,7 +159,9 @@ void main() {
       expect(hasTreeConnectorPainter, isFalse);
     });
 
-    testWidgets('should use Material Design colors when provided', (WidgetTester tester) async {
+    testWidgets('should use Material Design colors when provided', (
+      WidgetTester tester,
+    ) async {
       final TreeNode node = TreeNode(
         path: Uri.parse('file://folder/test.txt'),
         isLeaf: true,
@@ -173,10 +192,15 @@ void main() {
       expect(inkWell.hoverColor, equals(Colors.blue.withValues(alpha: 0.1)));
       expect(inkWell.focusColor, equals(Colors.blue.withValues(alpha: 0.2)));
       expect(inkWell.splashColor, equals(Colors.blue.withValues(alpha: 0.3)));
-      expect(inkWell.highlightColor, equals(Colors.blue.withValues(alpha: 0.4)));
+      expect(
+        inkWell.highlightColor,
+        equals(Colors.blue.withValues(alpha: 0.4)),
+      );
     });
 
-    testWidgets('should use Material theme colors as fallback', (WidgetTester tester) async {
+    testWidgets('should use Material theme colors as fallback', (
+      WidgetTester tester,
+    ) async {
       final TreeNode node = TreeNode(
         path: Uri.parse('file://folder/test.txt'),
         isLeaf: true,
@@ -206,11 +230,10 @@ void main() {
       expect(inkWell.highlightColor, equals(Colors.red.withValues(alpha: 0.4)));
     });
 
-    testWidgets('should handle zero depth correctly', (WidgetTester tester) async {
-      final TreeNode node = TreeNode(
-        path: Uri.parse('file://'),
-        isLeaf: false,
-      );
+    testWidgets('should handle zero depth correctly', (
+      WidgetTester tester,
+    ) async {
+      final TreeNode node = TreeNode(path: Uri.parse('file://'), isLeaf: false);
 
       await tester.pumpWidget(
         MaterialApp(
@@ -224,11 +247,15 @@ void main() {
       );
 
       // Should have no indentation
-      final SizedBox sizedBox = tester.widget<SizedBox>(find.byType(SizedBox).first);
+      final SizedBox sizedBox = tester.widget<SizedBox>(
+        find.byType(SizedBox).first,
+      );
       expect(sizedBox.width, equals(0));
     });
 
-    testWidgets('should handle deep nesting correctly', (WidgetTester tester) async {
+    testWidgets('should handle deep nesting correctly', (
+      WidgetTester tester,
+    ) async {
       final TreeNode node = TreeNode(
         path: Uri.parse('file://a/b/c/d/e/f/g/h/i/j/test.txt'),
         isLeaf: true,
@@ -246,7 +273,9 @@ void main() {
       );
 
       // Should have proper deep indentation (depth is 11 for the given path)
-      final SizedBox sizedBox = tester.widget<SizedBox>(find.byType(SizedBox).first);
+      final SizedBox sizedBox = tester.widget<SizedBox>(
+        find.byType(SizedBox).first,
+      );
       expect(sizedBox.width, equals(11 * 24)); // depth * default indentSize
     });
   });
