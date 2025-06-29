@@ -6,6 +6,7 @@ import 'stories/interaction_stories.dart';
 import 'stories/theme_stories.dart';
 import 'stories/data_stories.dart';
 import 'stories/accessibility_stories.dart';
+import 'stories/advanced_stories.dart';
 
 void main() {
   runApp(const StorybookApp());
@@ -63,6 +64,9 @@ class StorybookApp extends StatelessWidget {
         
         // Accessibility examples
         ...accessibilityStories,
+        
+        // Advanced examples
+        ...advancedStories,
       ],
     );
   }
