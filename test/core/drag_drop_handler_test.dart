@@ -36,8 +36,8 @@ void main() {
         expect(result.toString(), 'file://folder2/file1.txt');
       });
 
-      test('should move file to root level', () {
-        // Moving file1.txt from folder1 to root
+      test('should move file into folder3', () {
+        // Moving file1.txt from folder1 to folder3 (dropping after folder3 means INTO folder3)
         final Uri result = DragDropHandler.calculateNewPath(
           draggedNode: testNodes[2], // file1.txt
           oldIndex: 2,
@@ -45,7 +45,7 @@ void main() {
           visibleNodes: testNodes,
         );
 
-        expect(result.toString(), 'file://file1.txt/');
+        expect(result.toString(), 'file://folder3/file1.txt');
       });
 
       test('should move folder to different parent', () {
@@ -180,31 +180,34 @@ void main() {
     });
 
     group('getDropTarget', () {
-      test('should identify folder drop target', () {
-        // Dropping onto a folder
+      test('should identify drop after leaf node', () {
+        // Dropping after file2.txt (which determines target parent)
         final DropTargetInfo result = DragDropHandler.getDropTarget(
+          oldIndex: 0,
           newIndex: 4,
           visibleNodes: testNodes,
         );
 
-        expect(result.targetNode, testNodes[4]); // folder2
+        expect(result.targetNode, testNodes[3]); // file2.txt (previous node)
         expect(result.dropIntoFolder, false);
-        expect(result.targetParentPath, Uri.parse('file://'));
+        expect(result.targetParentPath, Uri.parse('file://folder1/'));
       });
 
       test('should identify parent from previous sibling', () {
-        // Dropping after file2.txt (index 4)
+        // Dropping after file2.txt (index 3), so parent should be folder1
         final DropTargetInfo result = DragDropHandler.getDropTarget(
+          oldIndex: 0,
           newIndex: 4,
           visibleNodes: testNodes,
         );
 
-        expect(result.targetParentPath, Uri.parse('file://'));
+        expect(result.targetParentPath, Uri.parse('file://folder1/'));
       });
 
       test('should handle drop at beginning', () {
         // Dropping at index 0
         final DropTargetInfo result = DragDropHandler.getDropTarget(
+          oldIndex: 1,
           newIndex: 0,
           visibleNodes: testNodes,
         );
@@ -216,6 +219,7 @@ void main() {
       test('should handle drop at end', () {
         // Dropping at the end
         final DropTargetInfo result = DragDropHandler.getDropTarget(
+          oldIndex: 0,
           newIndex: testNodes.length,
           visibleNodes: testNodes,
         );

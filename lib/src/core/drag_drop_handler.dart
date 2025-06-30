@@ -59,6 +59,7 @@ class DragDropHandler {
 
     // Get drop target info
     final DropTargetInfo dropTarget = getDropTarget(
+      oldIndex: oldIndex,
       newIndex: newIndex,
       visibleNodes: visibleNodes,
     );
@@ -66,22 +67,32 @@ class DragDropHandler {
     // Extract node name
     final String nodeName = draggedNode.displayName;
 
+    // If dropping into a folder, use the special handling
+    if (dropTarget.dropIntoFolder) {
+      return calculateNewPath(
+        draggedNode: draggedNode,
+        oldIndex: oldIndex,
+        newIndex: newIndex,
+        visibleNodes: visibleNodes,
+        dropIntoFolder: true,
+        targetFolderPath: dropTarget.targetParentPath,
+      );
+    }
+
     // Build new path based on target parent
     final Uri targetParent = dropTarget.targetParentPath;
 
     // Special handling for file:// URIs
     if (targetParent.scheme == 'file') {
-      // Check if we're moving to root (file://)
+      // Check if this is root (no host and no path segments)
       if (targetParent.host.isEmpty && targetParent.pathSegments.isEmpty) {
-        // Moving to root - node name becomes the host
+        // Moving to root - create URI like file://nodename
         return Uri(scheme: 'file', host: nodeName);
-      } else if (targetParent.host.isNotEmpty &&
-          targetParent.pathSegments.isEmpty) {
-        // Moving to first level folder (e.g., file://folder1)
-        // Node becomes a path under the host
+      } else if (targetParent.host.isNotEmpty && targetParent.pathSegments.isEmpty) {
+        // Moving to a folder represented as host (like file://folder1/)
         return Uri(scheme: 'file', host: targetParent.host, path: '/$nodeName');
       } else {
-        // Moving to deeper folder
+        // Moving to a nested folder with path segments
         final String parentPath = targetParent.path;
         final String newPath = parentPath.endsWith('/')
             ? '$parentPath$nodeName'
@@ -180,12 +191,15 @@ class DragDropHandler {
 
   /// Gets information about the drop target based on the drop index.
   ///
-  /// Determines the target parent path and whether dropping into a folder.
+  /// Determines the target parent path by looking at the previous node.
+  /// If the previous node is a folder, we drop into it.
+  /// Otherwise, we drop into the same parent as the previous node.
   static DropTargetInfo getDropTarget({
+    required int oldIndex,
     required int newIndex,
     required List<TreeNode> visibleNodes,
   }) {
-    // Handle drop at beginning
+    // Handle drop at beginning - drop at root
     if (newIndex == 0) {
       return DropTargetInfo(
         targetNode: null,
@@ -194,34 +208,46 @@ class DragDropHandler {
       );
     }
 
-    // Handle drop at end
-    if (newIndex >= visibleNodes.length) {
-      // Use parent of last node or root
-      if (visibleNodes.isNotEmpty) {
-        final TreeNode lastNode = visibleNodes.last;
-        return DropTargetInfo(
-          targetNode: lastNode,
-          targetParentPath: lastNode.parentPath ?? Uri.parse('file://'),
-          dropIntoFolder: false,
-        );
-      }
+    // When dragging, we want to determine where the item will end up
+    // The key insight: if we're dropping right after a folder, we should drop INTO that folder
+    
+    // The node we're checking is the one that will be just before our dropped item
+    int checkIndex;
+    if (oldIndex < newIndex) {
+      // Dragging down: the item will be placed after newIndex-1
+      // So we check the item at newIndex-1
+      checkIndex = newIndex - 1;
+    } else {
+      // Dragging up: the item will be placed before newIndex
+      // So we check the item at newIndex-1 (unless it's 0)
+      checkIndex = newIndex > 0 ? newIndex - 1 : 0;
+    }
+    
+    // Handle edge cases
+    if (checkIndex < 0) {
+      checkIndex = 0;
+    }
+    if (checkIndex >= visibleNodes.length) {
+      checkIndex = visibleNodes.length - 1;
+    }
+    
+    final TreeNode previousNode = visibleNodes[checkIndex];
+    
+    // If the previous node is a folder, drop into it
+    if (!previousNode.isLeaf) {
       return DropTargetInfo(
-        targetNode: null,
-        targetParentPath: Uri.parse('file://'),
+        targetNode: previousNode,
+        targetParentPath: previousNode.path,
+        dropIntoFolder: true,
+      );
+    } else {
+      // Otherwise, drop into the same parent as the previous node
+      return DropTargetInfo(
+        targetNode: previousNode,
+        targetParentPath: TreePath.getParentPath(previousNode.path) ?? Uri.parse('file://'),
         dropIntoFolder: false,
       );
     }
-
-    // Get node at drop position
-    final TreeNode targetNode = visibleNodes[newIndex];
-
-    // For now, always use parent of target node
-    // In future, could check drop zones for folder drops
-    return DropTargetInfo(
-      targetNode: targetNode,
-      targetParentPath: targetNode.parentPath ?? Uri.parse('file://'),
-      dropIntoFolder: false,
-    );
   }
 }
 

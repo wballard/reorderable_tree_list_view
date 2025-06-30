@@ -214,6 +214,7 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
   late TreeFocusManager _focusManager;
   late EventController _eventController;
   final FocusNode _treeFocusNode = FocusNode();
+  Uri? _draggingPath;
 
   @override
   void initState() {
@@ -385,20 +386,14 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
   }
 
   Future<void> _handleReorder(int oldIndex, int newIndex, List<TreeNode> visibleNodes) async {
-    // ReorderableListView adjusts newIndex when moving down
-    int adjustedNewIndex = newIndex;
-    if (oldIndex < newIndex) {
-      adjustedNewIndex -= 1;
-    }
-
     // Get the dragged node
     final TreeNode draggedNode = visibleNodes[oldIndex];
 
-    // Calculate new path
+    // Calculate new path - pass the raw newIndex, DragDropHandler will handle the logic
     final Uri newPath = DragDropHandler.calculateNewPath(
       draggedNode: draggedNode,
       oldIndex: oldIndex,
-      newIndex: adjustedNewIndex,
+      newIndex: newIndex,
       visibleNodes: visibleNodes,
     );
 
@@ -535,6 +530,7 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
       },
       onReorderStart: (int index) {
         final Uri path = visibleNodes[index].path;
+        _draggingPath = path;
         // Check if drag is allowed
         if (!_eventController.canDrag(path)) {
           // TODO(cancel-drag): Add drag cancellation when ReorderableListView supports it.
@@ -542,7 +538,10 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
         _eventController.notifyDragStart(path);
       },
       onReorderEnd: (int index) {
-        _eventController.notifyDragEnd(visibleNodes[index].path);
+        if (_draggingPath != null) {
+          _eventController.notifyDragEnd(_draggingPath!);
+          _draggingPath = null;
+        }
       },
       proxyDecorator: widget.proxyDecorator,
     );

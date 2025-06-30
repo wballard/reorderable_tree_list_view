@@ -228,7 +228,7 @@ class _FileExplorerStoryState extends State<_FileExplorerStory> {
   }
 
   Widget _buildFileItem(BuildContext context, Uri path) {
-    final String displayName = TreePath.getDisplayName(path);
+    // final String displayName = TreePath.getDisplayName(path);
     final bool isSelected = selectedPaths.contains(path);
     
     return Container(
@@ -240,7 +240,7 @@ class _FileExplorerStoryState extends State<_FileExplorerStory> {
   }
 
   Widget _buildFolderItem(BuildContext context, Uri path) {
-    final String displayName = TreePath.getDisplayName(path);
+    // final String displayName = TreePath.getDisplayName(path);
     final bool isSelected = selectedPaths.contains(path);
     
     return Container(
@@ -310,10 +310,10 @@ class _ProjectNavigatorStoryState extends State<_ProjectNavigatorStory> {
 
   @override
   Widget build(BuildContext context) {
-    final bool showOnlyModified = context.knobs.boolean(
-      label: 'Show Only Modified',
-      initial: false,
-    );
+    // final bool showOnlyModified = context.knobs.boolean(
+    //   label: 'Show Only Modified',
+    //   initial: false,
+    // );
 
     return StoryWrapper(
       title: 'Project Navigator',
@@ -556,7 +556,7 @@ class ${_getClassName(fileName)} extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text('${fileName}'),
+      child: Text(fileName),
     );
   }
 }''';
