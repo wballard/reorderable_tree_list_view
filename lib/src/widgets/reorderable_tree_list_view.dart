@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:reorderable_tree_list_view/src/actions/activate_node_action.dart';
-import 'package:reorderable_tree_list_view/src/actions/collapse_node_action.dart';
-import 'package:reorderable_tree_list_view/src/actions/expand_node_action.dart';
 import 'package:reorderable_tree_list_view/src/actions/select_node_action.dart';
 import 'package:reorderable_tree_list_view/src/core/drag_drop_handler.dart';
 import 'package:reorderable_tree_list_view/src/core/event_controller.dart';
@@ -441,8 +439,24 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
 
   /// Creates the map of actions for the tree view.
   Map<Type, Action<Intent>> _createActions() => <Type, Action<Intent>>{
-    ExpandNodeIntent: ExpandNodeAction(treeState: _treeState),
-    CollapseNodeIntent: CollapseNodeAction(treeState: _treeState),
+    ExpandNodeIntent: CallbackAction<ExpandNodeIntent>(
+      onInvoke: (ExpandNodeIntent intent) {
+        // Execute async toggle in a non-blocking way
+        () async {
+          await _toggleExpansion(intent.path);
+        }();
+        return null;
+      },
+    ),
+    CollapseNodeIntent: CallbackAction<CollapseNodeIntent>(
+      onInvoke: (CollapseNodeIntent intent) {
+        // Execute async toggle in a non-blocking way
+        () async {
+          await _toggleExpansion(intent.path);
+        }();
+        return null;
+      },
+    ),
     ActivateNodeIntent: ActivateNodeAction(
       treeState: _treeState,
       onActivate: (Uri path) {

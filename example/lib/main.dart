@@ -1,348 +1,230 @@
 import 'package:flutter/material.dart';
-import 'package:reorderable_tree_list_view/reorderable_tree_list_view.dart';
+import 'package:storybook_flutter/storybook_flutter.dart';
+
+import 'stories/accessibility_stories.dart';
+import 'stories/advanced_stories.dart';
+import 'stories/basic_stories.dart';
+import 'stories/data_stories.dart';
+import 'stories/interaction_stories.dart';
+import 'stories/theme_stories.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const StorybookApp());
 }
 
-/// Example application demonstrating ReorderableTreeListView.
-class MyApp extends StatelessWidget {
-  /// Creates the example app.
-  const MyApp({super.key});
+/// Storybook app for ReorderableTreeListView widget showcase
+class StorybookApp extends StatelessWidget {
+  /// Creates the Storybook app
+  const StorybookApp({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
-      title: 'ReorderableTreeListView Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+  Widget build(BuildContext context) {
+    return Storybook(
+      wrapperBuilder: (context, child) => MaterialApp(
+        title: 'ReorderableTreeListView Storybook',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        darkTheme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.deepPurple,
+            brightness: Brightness.dark,
+          ),
+          useMaterial3: true,
+        ),
+        home: child,
+        debugShowCheckedModeBanner: false,
       ),
-      home: const MyHomePage(),
-    );
-}
+      plugins: [
+        DeviceFramePlugin(),
+        ThemeModePlugin(),
+      ],
+      stories: [
+        // Welcome story
+        Story(
+          name: 'Welcome',
+          builder: (context) => _WelcomeStory(),
+        ),
 
-/// Home page showing the tree view example.
-class MyHomePage extends StatefulWidget {
-  /// Creates the home page.
-  const MyHomePage({super.key});
+        // Basic examples
+        ...basicStories,
 
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
+        // Interaction examples
+        ...interactionStories,
 
-class _MyHomePageState extends State<MyHomePage> {
-  // Sample paths representing a file system structure
-  late List<Uri> paths;
-  String? _dragStatus;
-  final List<String> _reorderHistory = [];
+        // Theme examples
+        ...themeStories,
 
-  @override
-  void initState() {
-    super.initState();
-    paths = <Uri>[
-      Uri.parse('file://home/user/documents/report.pdf'),
-      Uri.parse('file://home/user/documents/presentation.pptx'),
-      Uri.parse('file://home/user/pictures/vacation/beach.jpg'),
-      Uri.parse('file://home/user/pictures/vacation/sunset.jpg'),
-      Uri.parse('file://home/user/pictures/family.jpg'),
-      Uri.parse('file://home/user/music/playlist.m3u'),
-      Uri.parse('file://home/user/downloads/app.zip'),
-      Uri.parse('file://etc/config.conf'),
-      Uri.parse('file://var/log/system.log'),
-    ];
-  }
+        // Data scenarios
+        ...dataStories,
 
-  bool _showConnectors = true;
-  double _indentSize = 32.0;
-  bool _showCustomTheme = false;
-  bool _expandedByDefault = true;
-  bool _animateExpansion = true;
-  bool _enableDragAndDrop = true;
+        // Accessibility examples
+        ...accessibilityStories,
 
-  TreeTheme get _currentTheme {
-    if (!_showCustomTheme) {
-      return TreeTheme(
-        indentSize: _indentSize,
-        showConnectors: _showConnectors,
-      );
-    }
-
-    return TreeTheme(
-      indentSize: _indentSize,
-      showConnectors: _showConnectors,
-      connectorColor: Colors.deepPurple.withValues(alpha: 0.6),
-      connectorWidth: 2.0,
-      itemPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
-      borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-      hoverColor: Colors.deepPurple.withValues(alpha: 0.04),
-      focusColor: Colors.deepPurple.withValues(alpha: 0.12),
-      splashColor: Colors.deepPurple.withValues(alpha: 0.08),
-      highlightColor: Colors.deepPurple.withValues(alpha: 0.04),
+        // Advanced examples
+        ...advancedStories,
+      ],
     );
   }
+}
 
+/// Welcome story widget
+class _WelcomeStory extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) {
+    return Scaffold(
       appBar: AppBar(
+        title: const Text('ReorderableTreeListView'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('ReorderableTreeListView Demo'),
       ),
-      body: Column(
-        children: [
-          // Theme Controls
-          Card(
-            margin: const EdgeInsets.all(8.0),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Text(
+              'ReorderableTreeListView',
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'A Flutter widget for displaying hierarchical data with drag-and-drop reordering capabilities.',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            const SizedBox(height: 32),
+
+            // Key Features
+            Text(
+              'Key Features',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 16),
+            ..._buildFeatureList(context),
+            const SizedBox(height: 32),
+
+            // Quick Start
+            Text(
+              'Quick Start',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '''ReorderableTreeListView(
+  paths: [
+    Uri.parse('file:///folder1/file1.txt'),
+    Uri.parse('file:///folder1/file2.txt'),
+    Uri.parse('file:///folder2/file3.txt'),
+  ],
+  itemBuilder: (context, path) => Text(
+    TreePath.getDisplayName(path),
+  ),
+  onReorder: (oldPath, newPath) {
+    // Handle reordering
+  },
+)''',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontFamily: 'monospace',
+                    ),
+              ),
+            ),
+            const SizedBox(height: 32),
+
+            // Story Categories
+            Text(
+              'Story Categories',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 16),
+            ..._buildStoryCategoryList(context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildFeatureList(BuildContext context) {
+    final features = [
+      'Hierarchical tree display with automatic grouping',
+      'Drag-and-drop reordering with smooth animations',
+      'Customizable themes and visual styling',
+      'Keyboard navigation and accessibility support',
+      'Selection modes (single, multiple, none)',
+      'Expandable/collapsible nodes',
+      'Context menu support',
+      'Validation callbacks for user interactions',
+      'Event handling with callbacks and Actions/Intents',
+      'Performance optimized for large datasets',
+    ];
+
+    return features
+        .map((feature) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Theme Controls',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                  Icon(
+                    Icons.check_circle,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      feature,
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: SwitchListTile(
-                          title: const Text('Show Connectors'),
-                          value: _showConnectors,
-                          onChanged: (value) => setState(() => _showConnectors = value),
-                          dense: true,
-                        ),
-                      ),
-                      Expanded(
-                        child: SwitchListTile(
-                          title: const Text('Custom Theme'),
-                          value: _showCustomTheme,
-                          onChanged: (value) => setState(() => _showCustomTheme = value),
-                          dense: true,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: SwitchListTile(
-                          title: const Text('Expanded by Default'),
-                          value: _expandedByDefault,
-                          onChanged: (value) => setState(() => _expandedByDefault = value),
-                          dense: true,
-                        ),
-                      ),
-                      Expanded(
-                        child: SwitchListTile(
-                          title: const Text('Animate Expansion'),
-                          value: _animateExpansion,
-                          onChanged: (value) => setState(() => _animateExpansion = value),
-                          dense: true,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const Text('Indent Size:'),
-                      Expanded(
-                        child: Slider(
-                          value: _indentSize,
-                          min: 16.0,
-                          max: 64.0,
-                          divisions: 12,
-                          label: _indentSize.round().toString(),
-                          onChanged: (value) => setState(() => _indentSize = value),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SwitchListTile(
-                    title: const Text('Enable Drag and Drop'),
-                    value: _enableDragAndDrop,
-                    onChanged: (value) => setState(() => _enableDragAndDrop = value),
-                    dense: true,
                   ),
                 ],
               ),
-            ),
-          ),
-          // Drag Status
-          if (_dragStatus != null)
-            Card(
-              margin: const EdgeInsets.symmetric(horizontal: 8.0),
-              color: Colors.blue.shade50,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    const Icon(Icons.info_outline, size: 16),
-                    const SizedBox(width: 8),
-                    Expanded(child: Text(_dragStatus!)),
-                  ],
-                ),
-              ),
-            ),
-          // Reorder History
-          if (_reorderHistory.isNotEmpty)
-            Card(
-              margin: const EdgeInsets.all(8.0),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Reorder History',
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                        TextButton(
-                          onPressed: () => setState(() => _reorderHistory.clear()),
-                          child: const Text('Clear'),
-                        ),
-                      ],
-                    ),
-                    ..._reorderHistory.take(5).map((entry) => Text(
-                      entry,
-                      style: Theme.of(context).textTheme.bodySmall,
-                    )),
-                  ],
-                ),
-              ),
-            ),
-          // Tree View
-          Expanded(
-            child: ReorderableTreeListView(
-              paths: paths,
-              theme: _currentTheme,
-              padding: const EdgeInsets.all(8),
-              expandedByDefault: _expandedByDefault,
-              animateExpansion: _animateExpansion,
-              onReorder: _enableDragAndDrop ? (oldPath, newPath) {
-                setState(() {
-                  // Update paths list
-                  paths = List<Uri>.from(paths);
-                  paths.remove(oldPath);
-                  paths.add(newPath);
-                  
-                  // Add to history
-                  final String shortOld = TreePath.getDisplayName(oldPath);
-                  final String shortNew = TreePath.getDisplayName(newPath);
-                  final String parent = newPath.pathSegments.isEmpty 
-                      ? 'root' 
-                      : TreePath.getDisplayName(TreePath.getParentPath(newPath) ?? newPath);
-                  _reorderHistory.insert(0, 'Moved $shortOld to $parent as $shortNew');
-                  
-                  _dragStatus = null;
-                });
-              } : null,
-              onDragStart: _enableDragAndDrop ? (path) {
-                setState(() {
-                  _dragStatus = 'Dragging: ${TreePath.getDisplayName(path)}';
-                });
-              } : null,
-              onDragEnd: _enableDragAndDrop ? (path) {
-                setState(() {
-                  if (_dragStatus?.contains('Dragging') ?? false) {
-                    _dragStatus = null;
-                  }
-                });
-              } : null,
-              onWillAcceptDrop: _enableDragAndDrop ? (draggedPath, targetPath) {
-                // Example: Don't allow dropping into 'etc' folder
-                if (targetPath.toString().contains('/etc/')) {
-                  setState(() {
-                    _dragStatus = 'Cannot drop into /etc/ folder';
-                  });
-                  return false;
-                }
-                return true;
-              } : null,
-              proxyDecorator: _enableDragAndDrop ? (child, index, animation) {
-                return AnimatedBuilder(
-                  animation: animation,
-                  builder: (context, child) {
-                    return Material(
-                      elevation: 8 * animation.value,
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.blue.withValues(alpha: 0.1),
-                      child: child,
-                    );
-                  },
-                  child: child,
-                );
-              } : null,
-              itemBuilder: (BuildContext context, Uri path) {
-                final String displayName = TreePath.getDisplayName(path);
-                
-                return Row(
-                  children: [
-                    Icon(
-                      Icons.insert_drive_file,
-                      color: _showCustomTheme ? Colors.deepPurple : Colors.blue,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            displayName,
-                            style: const TextStyle(fontWeight: FontWeight.normal),
-                          ),
-                          Text(
-                            path.toString(),
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-              },
-              folderBuilder: (BuildContext context, Uri path) {
-                final String displayName = TreePath.getDisplayName(path);
-                
-                return Row(
-                  children: [
-                    Icon(
-                      Icons.folder,
-                      color: _showCustomTheme ? Colors.deepPurple.shade300 : Colors.amber,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            displayName,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            path.toString(),
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-        ],
+            ))
+        .toList();
+  }
+
+  List<Widget> _buildStoryCategoryList(BuildContext context) {
+    final categories = [
+      ('Basic Stories', 'Simple tree examples and getting started'),
+      ('Interaction Stories', 'Drag/drop, selection, and user interactions'),
+      ('Theme Stories', 'Theming and visual customization'),
+      ('Data Stories', 'Different data scenarios and use cases'),
+      (
+        'Accessibility Stories',
+        'Keyboard navigation and screen reader support'
       ),
-    );
+    ];
+
+    return categories
+        .map((category) => Card(
+              margin: const EdgeInsets.only(bottom: 8),
+              child: ListTile(
+                leading: Icon(
+                  Icons.folder,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                title: Text(
+                  category.$1,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(category.$2),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              ),
+            ))
+        .toList();
+  }
 }

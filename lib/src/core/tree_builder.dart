@@ -70,75 +70,68 @@ class TreeBuilder {
   ///
   /// Sorting rules:
   /// 1. Parents always come before their children
-  /// 2. Within the same parent, sort by scheme first
-  /// 3. Then sort alphabetically by display name
+  /// 2. Children appear immediately after their parent
+  /// 3. Within the same parent, sort alphabetically by display name
   static void _sortNodes(List<TreeNode> nodes) {
-    nodes.sort((TreeNode a, TreeNode b) {
-      // First, ensure hierarchical order (parents before children)
-      if (TreePath.isAncestorOf(a.path, b.path)) {
-        return -1; // a is ancestor of b, so a comes first
+    // Create a map to quickly find children of each node
+    final Map<Uri, List<TreeNode>> childrenMap = <Uri, List<TreeNode>>{};
+    final Set<TreeNode> processedNodes = <TreeNode>{};
+    
+    // Build parent-child relationships
+    for (final TreeNode node in nodes) {
+      final Uri? parentPath = node.parentPath;
+      if (parentPath != null) {
+        childrenMap.putIfAbsent(parentPath, () => <TreeNode>[]).add(node);
       }
-      if (TreePath.isAncestorOf(b.path, a.path)) {
-        return 1; // b is ancestor of a, so b comes first
-      }
-
-      // If they're not in a parent-child relationship, compare depths
-      final int depthDiff = a.depth - b.depth;
-      if (depthDiff != 0) {
-        return depthDiff; // Shallower nodes come first
-      }
-
-      // Same depth, not parent-child - they must be siblings or in different branches
-      // First sort by scheme
+    }
+    
+    // Sort children within each parent
+    for (final List<TreeNode> children in childrenMap.values) {
+      children.sort((TreeNode a, TreeNode b) {
+        // First by scheme
+        final int schemeCompare = a.path.scheme.compareTo(b.path.scheme);
+        if (schemeCompare != 0) return schemeCompare;
+        
+        // Then alphabetically by display name
+        return a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase());
+      });
+    }
+    
+    // Rebuild the list in hierarchical order
+    final List<TreeNode> sortedNodes = <TreeNode>[];
+    
+    // Find root nodes (nodes with no parent)
+    final List<TreeNode> rootNodes = nodes.where((node) => node.parentPath == null).toList();
+    rootNodes.sort((TreeNode a, TreeNode b) {
+      // First by scheme
       final int schemeCompare = a.path.scheme.compareTo(b.path.scheme);
-      if (schemeCompare != 0) {
-        return schemeCompare;
-      }
-
-      // Same scheme, compare full paths for consistent ordering
-      // This ensures siblings are sorted alphabetically
-      return _comparePaths(a.path, b.path);
+      if (schemeCompare != 0) return schemeCompare;
+      
+      // Then alphabetically
+      return a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase());
     });
-  }
-
-  /// Compares two paths segment by segment for sorting.
-  static int _comparePaths(Uri a, Uri b) {
-    final List<String> aSegments = TreePath.calculateDepth(a) == 0
-        ? <String>[]
-        : _getPathSegments(a);
-    final List<String> bSegments = TreePath.calculateDepth(b) == 0
-        ? <String>[]
-        : _getPathSegments(b);
-
-    // Compare segment by segment
-    final int minLength = aSegments.length < bSegments.length
-        ? aSegments.length
-        : bSegments.length;
-
-    for (int i = 0; i < minLength; i++) {
-      final int compare = aSegments[i].toLowerCase().compareTo(
-        bSegments[i].toLowerCase(),
-      );
-      if (compare != 0) {
-        return compare;
+    
+    // Recursively add nodes in hierarchical order
+    void addNodeAndChildren(TreeNode node) {
+      if (processedNodes.contains(node)) return;
+      
+      sortedNodes.add(node);
+      processedNodes.add(node);
+      
+      // Add children immediately after parent
+      final List<TreeNode> children = childrenMap[node.path] ?? <TreeNode>[];
+      for (final TreeNode child in children) {
+        addNodeAndChildren(child);
       }
     }
-
-    // If all segments match, shorter path comes first
-    return aSegments.length - bSegments.length;
-  }
-
-  /// Gets all segments of a path including host for certain schemes.
-  static List<String> _getPathSegments(Uri path) {
-    final List<String> segments = <String>[];
-
-    // For non-standard web protocols, include host as first segment
-    if (path.host.isNotEmpty &&
-        !<String>['http', 'https', 'ftp', 'ws', 'wss'].contains(path.scheme)) {
-      segments.add(path.host);
+    
+    // Process all root nodes and their descendants
+    for (final TreeNode rootNode in rootNodes) {
+      addNodeAndChildren(rootNode);
     }
-
-    segments.addAll(path.pathSegments.where((String s) => s.isNotEmpty));
-    return segments;
+    
+    // Replace the original list with the sorted one
+    nodes.clear();
+    nodes.addAll(sortedNodes);
   }
 }
