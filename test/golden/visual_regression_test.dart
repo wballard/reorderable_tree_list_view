@@ -12,14 +12,14 @@ void main() {
         home: Scaffold(
           body: ReorderableTreeListView(
             paths: TestUtils.sampleFilePaths,
-            itemBuilder: (context, path) => Row(
+            itemBuilder: (BuildContext context, Uri path) => Row(
               children: [
                 const Icon(Icons.insert_drive_file, size: 20),
                 const SizedBox(width: 8),
                 Text(TreePath.getDisplayName(path)),
               ],
             ),
-            folderBuilder: (context, path) => Row(
+            folderBuilder: (BuildContext context, Uri path) => Row(
               children: [
                 const Icon(Icons.folder, size: 20, color: Colors.amber),
                 const SizedBox(width: 8),
@@ -50,14 +50,14 @@ void main() {
               showConnectors: true,
               connectorColor: Colors.grey,
             ),
-            itemBuilder: (context, path) => Row(
+            itemBuilder: (BuildContext context, Uri path) => Row(
               children: [
                 const Icon(Icons.insert_drive_file, size: 20),
                 const SizedBox(width: 8),
                 Text(TreePath.getDisplayName(path)),
               ],
             ),
-            folderBuilder: (context, path) => Row(
+            folderBuilder: (BuildContext context, Uri path) => Row(
               children: [
                 const Icon(Icons.folder, size: 20, color: Colors.amber),
                 const SizedBox(width: 8),
@@ -85,17 +85,17 @@ void main() {
             paths: TestUtils.sampleFilePaths,
             theme: TreeTheme(
               connectorColor: Colors.grey[700]!,
-              hoverColor: Colors.white.withOpacity(0.1),
-              focusColor: Colors.white.withOpacity(0.2),
+              hoverColor: Colors.white.withValues(alpha: 0.1),
+              focusColor: Colors.white.withValues(alpha: 0.2),
             ),
-            itemBuilder: (context, path) => Row(
+            itemBuilder: (BuildContext context, Uri path) => Row(
               children: [
                 const Icon(Icons.insert_drive_file, size: 20),
                 const SizedBox(width: 8),
                 Text(TreePath.getDisplayName(path)),
               ],
             ),
-            folderBuilder: (context, path) => Row(
+            folderBuilder: (BuildContext context, Uri path) => Row(
               children: [
                 const Icon(Icons.folder, size: 20, color: Colors.amber),
                 const SizedBox(width: 8),
@@ -116,7 +116,7 @@ void main() {
     });
 
     testWidgets('selected items state', (WidgetTester tester) async {
-      final selectedPaths = {
+      final Set<Uri> selectedPaths = <Uri>{
         Uri.parse('file:///folder1/file1.txt'),
         Uri.parse('file:///folder2/file4.txt'),
       };
@@ -128,10 +128,10 @@ void main() {
             paths: TestUtils.sampleFilePaths,
             selectionMode: SelectionMode.multiple,
             initialSelection: selectedPaths,
-            itemBuilder: (context, path) {
-              final isSelected = selectedPaths.contains(path);
+            itemBuilder: (BuildContext context, Uri path) {
+              final bool isSelected = selectedPaths.contains(path);
               return Container(
-                color: isSelected ? Colors.blue.withOpacity(0.2) : null,
+                color: isSelected ? Colors.blue.withValues(alpha: 0.2) : null,
                 child: Row(
                   children: [
                     if (isSelected) const Icon(Icons.check_circle, size: 20, color: Colors.blue),
@@ -142,7 +142,7 @@ void main() {
                 ),
               );
             },
-            folderBuilder: (context, path) => Row(
+            folderBuilder: (BuildContext context, Uri path) => Row(
               children: [
                 const Icon(Icons.folder, size: 20, color: Colors.amber),
                 const SizedBox(width: 8),
@@ -168,18 +168,18 @@ void main() {
         home: Scaffold(
           body: ReorderableTreeListView(
             paths: TestUtils.sampleFilePaths,
-            onReorder: (oldPath, newPath) {},
-            proxyDecorator: (child, index, animation) {
+            onReorder: (Uri oldPath, Uri newPath) {},
+            proxyDecorator: (Widget child, int index, Animation<double> animation) {
               return AnimatedBuilder(
                 animation: animation,
-                builder: (context, child) {
+                builder: (BuildContext context, Widget? child) {
                   return Material(
                     elevation: 8,
                     borderRadius: BorderRadius.circular(8),
-                    shadowColor: Colors.blue.withOpacity(0.5),
+                    shadowColor: Colors.blue.withValues(alpha: 0.5),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.blue.withOpacity(0.1),
+                        color: Colors.blue.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: Colors.blue, width: 2),
                       ),
@@ -190,7 +190,7 @@ void main() {
                 child: child,
               );
             },
-            itemBuilder: (context, path) => Row(
+            itemBuilder: (BuildContext context, Uri path) => Row(
               children: [
                 const Icon(Icons.insert_drive_file, size: 20),
                 const SizedBox(width: 8),
@@ -202,8 +202,8 @@ void main() {
       ));
 
       // Start drag
-      final firstItem = find.byType(ReorderableTreeListViewItem).first;
-      final gesture = await tester.startGesture(tester.getCenter(firstItem));
+      final Finder firstItem = find.byType(ReorderableTreeListViewItem).first;
+      final TestGesture gesture = await tester.startGesture(tester.getCenter(firstItem));
       await tester.pump(const Duration(milliseconds: 100));
       
       // Move slightly to show drag feedback
@@ -224,7 +224,7 @@ void main() {
         theme: ThemeData(useMaterial3: true),
         home: Scaffold(
           body: ReorderableTreeListView(
-            paths: TestUtils.MockData.deepHierarchy,
+            paths: MockData.deepHierarchy,
             expandedByDefault: true,
             theme: const TreeTheme(
               indentSize: 48,
@@ -232,14 +232,14 @@ void main() {
               connectorColor: Colors.indigo,
               connectorWidth: 2,
             ),
-            itemBuilder: (context, path) => Row(
+            itemBuilder: (BuildContext context, Uri path) => Row(
               children: [
                 const Icon(Icons.insert_drive_file, size: 20),
                 const SizedBox(width: 8),
                 Text(TreePath.getDisplayName(path)),
               ],
             ),
-            folderBuilder: (context, path) => Row(
+            folderBuilder: (BuildContext context, Uri path) => Row(
               children: [
                 const Icon(Icons.folder, size: 20, color: Colors.amber),
                 const SizedBox(width: 8),
@@ -272,7 +272,7 @@ void main() {
               itemPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               indentSize: 20,
             ),
-            itemBuilder: (context, path) => Row(
+            itemBuilder: (BuildContext context, Uri path) => Row(
               children: [
                 const Icon(Icons.insert_drive_file, size: 16),
                 const SizedBox(width: 4),
@@ -282,7 +282,7 @@ void main() {
                 ),
               ],
             ),
-            folderBuilder: (context, path) => Row(
+            folderBuilder: (BuildContext context, Uri path) => Row(
               children: [
                 const Icon(Icons.folder, size: 16, color: Colors.amber),
                 const SizedBox(width: 4),
@@ -307,9 +307,9 @@ void main() {
         theme: ThemeData(useMaterial3: true),
         home: Scaffold(
           body: ReorderableTreeListView(
-            paths: TestUtils.MockData.mixedSchemes,
-            itemBuilder: (context, path) {
-              final scheme = path.scheme;
+            paths: MockData.mixedSchemes,
+            itemBuilder: (BuildContext context, Uri path) {
+              final String scheme = path.scheme;
               IconData icon;
               Color color;
               
@@ -337,7 +337,7 @@ void main() {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.2),
+                      color: color.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
