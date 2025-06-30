@@ -23,11 +23,6 @@ final List<Story> advancedStories = [
     builder: (context) => const _PersistentStateStory(),
   ),
   Story(
-    name: 'Advanced/Undo/Redo',
-    description: 'Undo/redo functionality for tree operations',
-    builder: (context) => const _UndoRedoStory(),
-  ),
-  Story(
     name: 'Advanced/Custom Shortcuts',
     description: 'Custom keyboard shortcuts and actions',
     builder: (context) => const _CustomShortcutsStory(),
@@ -169,7 +164,6 @@ class _FileExplorerStoryState extends State<_FileExplorerStory> {
               paths: paths,
               theme: const TreeTheme(
                 indentSize: 24,
-                showConnectors: false,
               ),
               selectionMode: SelectionMode.multiple,
               initialSelection: selectedPaths,
@@ -381,7 +375,6 @@ class _ProjectNavigatorStoryState extends State<_ProjectNavigatorStory> {
                     paths: filteredPaths,
                     theme: const TreeTheme(
                       indentSize: 20,
-                      showConnectors: false,
                       itemPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     ),
                     expandedByDefault: true,
@@ -757,211 +750,6 @@ class _PersistentStateStoryState extends State<_PersistentStateStory> {
   }
 }
 
-/// Undo/Redo story
-class _UndoRedoStory extends StatefulWidget {
-  const _UndoRedoStory();
-
-  @override
-  State<_UndoRedoStory> createState() => _UndoRedoStoryState();
-}
-
-class _UndoRedoAction {
-  final Uri oldPath;
-  final Uri newPath;
-  final DateTime timestamp;
-
-  _UndoRedoAction({
-    required this.oldPath,
-    required this.newPath,
-    required this.timestamp,
-  });
-}
-
-class _UndoRedoStoryState extends State<_UndoRedoStory> {
-  late List<Uri> paths;
-  final List<_UndoRedoAction> undoStack = [];
-  final List<_UndoRedoAction> redoStack = [];
-
-  @override
-  void initState() {
-    super.initState();
-    paths = List.from(StoryHelpers.minimalSamplePaths);
-  }
-
-  bool get canUndo => undoStack.isNotEmpty;
-  bool get canRedo => redoStack.isNotEmpty;
-
-  void _undo() {
-    if (!canUndo) return;
-
-    setState(() {
-      final action = undoStack.removeLast();
-      
-      // Revert the action
-      paths.remove(action.newPath);
-      paths.add(action.oldPath);
-      
-      // Add to redo stack
-      redoStack.add(action);
-    });
-  }
-
-  void _redo() {
-    if (!canRedo) return;
-
-    setState(() {
-      final action = redoStack.removeLast();
-      
-      // Replay the action
-      paths.remove(action.oldPath);
-      paths.add(action.newPath);
-      
-      // Add back to undo stack
-      undoStack.add(action);
-    });
-  }
-
-  void _clearHistory() {
-    setState(() {
-      undoStack.clear();
-      redoStack.clear();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return StoryWrapper(
-      title: 'Undo/Redo',
-      description: 'Undo and redo tree operations',
-      child: Column(
-        children: [
-          // Toolbar
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: canUndo ? _undo : null,
-                    icon: const Icon(Icons.undo),
-                    tooltip: 'Undo (${undoStack.length} actions)',
-                  ),
-                  IconButton(
-                    onPressed: canRedo ? _redo : null,
-                    icon: const Icon(Icons.redo),
-                    tooltip: 'Redo (${redoStack.length} actions)',
-                  ),
-                  const VerticalDivider(),
-                  TextButton.icon(
-                    onPressed: undoStack.isEmpty && redoStack.isEmpty
-                        ? null
-                        : _clearHistory,
-                    icon: const Icon(Icons.clear_all),
-                    label: const Text('Clear History'),
-                  ),
-                  const Spacer(),
-                  Text('History: ${undoStack.length} actions'),
-                ],
-              ),
-            ),
-          ),
-          
-          // History view
-          if (undoStack.isNotEmpty || redoStack.isNotEmpty)
-            Card(
-              child: Container(
-                height: 100,
-                padding: const EdgeInsets.all(8),
-                child: Row(
-                  children: [
-                    // Undo history
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Undo History',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 4),
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: undoStack.length,
-                              itemBuilder: (context, index) {
-                                final action = undoStack[undoStack.length - 1 - index];
-                                return Text(
-                                  '${TreePath.getDisplayName(action.oldPath)} → ${TreePath.getDisplayName(action.newPath)}',
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const VerticalDivider(),
-                    // Redo history
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Redo History',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 4),
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: redoStack.length,
-                              itemBuilder: (context, index) {
-                                final action = redoStack[redoStack.length - 1 - index];
-                                return Text(
-                                  '${TreePath.getDisplayName(action.oldPath)} → ${TreePath.getDisplayName(action.newPath)}',
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          
-          const SizedBox(height: 16),
-          
-          // Tree view
-          Expanded(
-            child: ReorderableTreeListView(
-              paths: paths,
-              itemBuilder: (context, path) => StoryItemBuilder.buildFileItem(context, path),
-              folderBuilder: (context, path) => StoryItemBuilder.buildFolderItem(context, path),
-              onReorder: (oldPath, newPath) {
-                setState(() {
-                  // Perform the action
-                  paths.remove(oldPath);
-                  paths.add(newPath);
-                  
-                  // Add to undo stack
-                  undoStack.add(_UndoRedoAction(
-                    oldPath: oldPath,
-                    newPath: newPath,
-                    timestamp: DateTime.now(),
-                  ));
-                  
-                  // Clear redo stack when new action is performed
-                  redoStack.clear();
-                });
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 /// Custom shortcuts story
 class _CustomShortcutsStory extends StatefulWidget {
