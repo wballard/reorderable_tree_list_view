@@ -138,9 +138,9 @@ void main() {
         expect(visibleNodes[0].displayName, equals('file://'));
         expect(visibleNodes[1].displayName, equals('root'));
         expect(visibleNodes[2].displayName, equals('child1'));
-        expect(visibleNodes[3].displayName, equals('child2'));
-        expect(visibleNodes[4].displayName, equals('grandchild1'));
-        expect(visibleNodes[5].displayName, equals('grandchild2'));
+        expect(visibleNodes[3].displayName, equals('grandchild1'));
+        expect(visibleNodes[4].displayName, equals('grandchild2'));
+        expect(visibleNodes[5].displayName, equals('child2'));
       });
 
       test('should update visibility after collapse', () {

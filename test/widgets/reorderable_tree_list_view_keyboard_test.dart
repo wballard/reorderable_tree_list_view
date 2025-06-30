@@ -318,8 +318,8 @@ void main() {
         // Wait for focus update
         await tester.pump(const Duration(milliseconds: 100));
         
-        // Last visible item should be focused - the last item in tree order is file3.txt
-        final Finder lastItemFinder = find.text('file://folder2/subfolder/file3.txt');
+        // Last visible item should be focused - the last item in tree order is file4.txt
+        final Finder lastItemFinder = find.text('file://folder3/file4.txt');
         expect(lastItemFinder, findsOneWidget);
         
         final ReorderableTreeListViewItem item = tester.widget<ReorderableTreeListViewItem>(
