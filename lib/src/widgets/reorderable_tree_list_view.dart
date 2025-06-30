@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:reorderable_tree_list_view/src/actions/activate_node_action.dart';
 import 'package:reorderable_tree_list_view/src/actions/select_node_action.dart';
 import 'package:reorderable_tree_list_view/src/core/drag_drop_handler.dart';
@@ -315,7 +314,9 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
       }
 
       // Notify selection changes
-      _eventController.notifySelectionChanged(_keyboardController.selectedPaths);
+      _eventController.notifySelectionChanged(
+        _keyboardController.selectedPaths,
+      );
     });
   }
 
@@ -349,14 +350,14 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
 
   Future<void> _toggleExpansion(Uri path) async {
     final bool isExpanded = _treeState.isExpanded(path);
-    
+
     // Check if expansion/collapse is allowed
     if (!isExpanded) {
       // Attempting to expand
       if (!_eventController.canExpand(path)) {
         return; // Not allowed
       }
-      
+
       // Check async validation if provided
       if (_eventController.canExpandAsyncCallback != null) {
         final bool canExpand = await _eventController.canExpandAsync(path);
@@ -364,17 +365,17 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
           return; // Not allowed
         }
       }
-      
+
       _eventController.notifyExpandStart(path);
     } else {
       // Attempting to collapse
       _eventController.notifyCollapseStart(path);
     }
-    
+
     setState(() {
       _treeState.toggleExpanded(path);
     });
-    
+
     // Notify completion
     if (!isExpanded) {
       _eventController.notifyExpandEnd(path);
@@ -383,7 +384,11 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
     }
   }
 
-  Future<void> _handleReorder(int oldIndex, int newIndex, List<TreeNode> visibleNodes) async {
+  Future<void> _handleReorder(
+    int oldIndex,
+    int newIndex,
+    List<TreeNode> visibleNodes,
+  ) async {
     // Get the dragged node
     final TreeNode draggedNode = visibleNodes[oldIndex];
 
@@ -399,15 +404,18 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
     if (!_eventController.canDrop(draggedNode.path, newPath)) {
       return; // Drop not allowed
     }
-    
+
     // Check async validation if provided
     if (_eventController.canDropAsyncCallback != null) {
-      final bool canDrop = await _eventController.canDropAsync(draggedNode.path, newPath);
+      final bool canDrop = await _eventController.canDropAsync(
+        draggedNode.path,
+        newPath,
+      );
       if (!canDrop) {
         return; // Drop not allowed
       }
     }
-    
+
     // Also check the legacy callback if provided
     if (widget.onWillAcceptDrop != null) {
       // Pass the new path to the callback for validation
@@ -468,7 +476,6 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
       keyboardController: _keyboardController,
       selectionMode: widget.selectionMode,
     ),
-    // TODO(dependencies): Add other actions that require additional dependencies
     // MoveNodeIntent: MoveNodeAction(treeState: _treeState),
     // DeleteNodeIntent: DeleteNodeAction(treeState: _treeState),
     // CopyNodeIntent: CopyNodeAction(treeState: _treeState),
@@ -547,7 +554,7 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
         _draggingPath = path;
         // Check if drag is allowed
         if (!_eventController.canDrag(path)) {
-          // TODO(cancel-drag): Add drag cancellation when ReorderableListView supports it.
+          // no op
         }
         _eventController.notifyDragStart(path);
       },

@@ -237,15 +237,15 @@ void main() {
         await tester.pumpAndSettle();
         // Give time for async focus transfer
         await tester.pump(const Duration(milliseconds: 100));
-        
+
         // Arrow down to folder1
         await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
         await tester.pumpAndSettle();
-        
+
         // Arrow right to expand folder1
         await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
         await tester.pumpAndSettle();
-        
+
         // Arrow down to file1.txt
         await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
         await tester.pumpAndSettle();
@@ -261,12 +261,13 @@ void main() {
         expect(folder1Finder, findsOneWidget);
 
         // Check if folder1 is focused
-        final ReorderableTreeListViewItem item = tester.widget<ReorderableTreeListViewItem>(
-          find.ancestor(
-            of: folder1Finder,
-            matching: find.byType(ReorderableTreeListViewItem),
-          ),
-        );
+        final ReorderableTreeListViewItem item = tester
+            .widget<ReorderableTreeListViewItem>(
+              find.ancestor(
+                of: folder1Finder,
+                matching: find.byType(ReorderableTreeListViewItem),
+              ),
+            );
         expect(item.isFocused, isTrue);
       });
     });
@@ -317,17 +318,18 @@ void main() {
 
         // Wait for focus update
         await tester.pump(const Duration(milliseconds: 100));
-        
+
         // Last visible item should be focused - the last item in tree order is file4.txt
         final Finder lastItemFinder = find.text('file://folder3/file4.txt');
         expect(lastItemFinder, findsOneWidget);
-        
-        final ReorderableTreeListViewItem item = tester.widget<ReorderableTreeListViewItem>(
-          find.ancestor(
-            of: lastItemFinder,
-            matching: find.byType(ReorderableTreeListViewItem),
-          ),
-        );
+
+        final ReorderableTreeListViewItem item = tester
+            .widget<ReorderableTreeListViewItem>(
+              find.ancestor(
+                of: lastItemFinder,
+                matching: find.byType(ReorderableTreeListViewItem),
+              ),
+            );
         expect(item.isFocused, isTrue);
       });
     });
@@ -392,112 +394,6 @@ void main() {
       });
     });
 
-    // TODO(Actions): Re-enable these tests after implementing Actions/Intents system
-    /*
-    group('Selection', () {
-      testWidgets('should select item in single selection mode', (WidgetTester tester) async {
-        Set<Uri>? selectedPaths;
-        
-        await tester.pumpWidget(buildTestWidget(
-          paths: testPaths,
-          selectionMode: SelectionMode.single,
-          onSelectionChanged: (Set<Uri> selection) {
-            selectedPaths = selection;
-          },
-        ));
-        await tester.pumpAndSettle();
-        
-        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
-        await tester.pumpAndSettle();
-        // Give time for async focus transfer
-        await tester.pump(const Duration(milliseconds: 100));
-        await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-        await tester.pumpAndSettle();
-        
-        // Select with Space
-        await tester.sendKeyEvent(LogicalKeyboardKey.space);
-        await tester.pumpAndSettle();
-        
-        expect(selectedPaths, <Uri>{Uri.parse('file://folder1/')});
-      });
-      
-      testWidgets('should handle multiple selection with Ctrl+Space', (WidgetTester tester) async {
-        Set<Uri>? selectedPaths;
-        
-        await tester.pumpWidget(buildTestWidget(
-          paths: testPaths,
-          selectionMode: SelectionMode.multiple,
-          onSelectionChanged: (Set<Uri> selection) {
-            selectedPaths = selection;
-          },
-        ));
-        await tester.pumpAndSettle();
-        
-        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
-        await tester.pumpAndSettle();
-        // Give time for async focus transfer
-        await tester.pump(const Duration(milliseconds: 100));
-        await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-        await tester.pumpAndSettle();
-        
-        // Select first item (folder1)
-        await tester.sendKeyEvent(LogicalKeyboardKey.space);
-        await tester.pumpAndSettle();
-        
-        // Move to next item (file1.txt)
-        await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-        await tester.pumpAndSettle();
-        
-        // Add to selection with Ctrl+Space
-        await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
-        await tester.sendKeyEvent(LogicalKeyboardKey.space);
-        await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
-        await tester.pumpAndSettle();
-        
-        expect(selectedPaths, <Uri>{
-          Uri.parse('file://folder1/'),
-          Uri.parse('file://folder1/file1.txt'),
-        });
-      });
-      
-      testWidgets('should handle range selection with Shift+Arrow', (WidgetTester tester) async {
-        Set<Uri>? selectedPaths;
-        
-        await tester.pumpWidget(buildTestWidget(
-          paths: testPaths,
-          selectionMode: SelectionMode.multiple,
-          onSelectionChanged: (Set<Uri> selection) {
-            selectedPaths = selection;
-          },
-        ));
-        await tester.pumpAndSettle();
-        
-        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
-        await tester.pumpAndSettle();
-        // Give time for async focus transfer
-        await tester.pump(const Duration(milliseconds: 100));
-        await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-        await tester.pumpAndSettle();
-        
-        // Select first item (folder1)
-        await tester.sendKeyEvent(LogicalKeyboardKey.space);
-        await tester.pumpAndSettle();
-        
-        // Extend selection with Shift+Arrow
-        await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
-        await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-        await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
-        await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
-        await tester.pumpAndSettle();
-        
-        expect(selectedPaths?.length, 3);
-        expect(selectedPaths?.contains(Uri.parse('file://folder1/')), isTrue);
-        expect(selectedPaths?.contains(Uri.parse('file://folder1/file1.txt')), isTrue);
-        expect(selectedPaths?.contains(Uri.parse('file://folder1/file2.txt')), isTrue);
-      });
-    });
-    */ // End of commented out section
-
     group('Accessibility', () {
       testWidgets('should disable keyboard navigation when flag is false', (
         WidgetTester tester,
@@ -514,7 +410,7 @@ void main() {
         // When keyboard navigation is disabled, the tree should not have TreeViewShortcuts
         final Finder shortcutsFinder = find.byType(TreeViewShortcuts);
         expect(shortcutsFinder, findsNothing);
-        
+
         // The tree should not respond to keyboard navigation
         final Finder folder1Finder = find.text('file://folder1/');
         expect(folder1Finder, findsOneWidget);
@@ -529,7 +425,7 @@ void main() {
         // Check that the tree structure is present
         expect(find.text('file://folder1/'), findsOneWidget);
         expect(find.text('file://folder1/file1.txt'), findsOneWidget);
-        
+
         // Verify the tree has proper widget structure for accessibility
         final Finder treeViewFinder = find.byType(ReorderableTreeListView);
         expect(treeViewFinder, findsOneWidget);
