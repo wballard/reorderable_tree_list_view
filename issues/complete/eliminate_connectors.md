@@ -1,0 +1,1 @@
+We don't need connectors, eliminate them in the Widget, docs, stores, examples and tests.

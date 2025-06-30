@@ -183,10 +183,7 @@ void main() {
         child: TestUtils.createTestApp(
           paths: TestUtils.sampleFilePaths,
           expandedByDefault: true,
-          theme: const TreeTheme(
-            connectorColor: Colors.black,
-            connectorWidth: 3.0,
-          ),
+          theme: const TreeTheme(),
         ),
       ));
 

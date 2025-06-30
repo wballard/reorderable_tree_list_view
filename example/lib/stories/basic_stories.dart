@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:storybook_flutter/storybook_flutter.dart';
-import 'package:reorderable_tree_list_view/reorderable_tree_list_view.dart';
-
 import 'package:example/story_helpers.dart';
+import 'package:flutter/material.dart';
+import 'package:reorderable_tree_list_view/reorderable_tree_list_view.dart';
+import 'package:storybook_flutter/storybook_flutter.dart';
 
 /// Basic stories showcasing simple ReorderableTreeListView usage
 final List<Story> basicStories = [
@@ -47,18 +46,13 @@ class _SimpleTreeStoryState extends State<_SimpleTreeStory> {
 
   @override
   Widget build(BuildContext context) {
-    final bool showConnectors = context.knobs.boolean(
-      label: 'Show Connectors',
-      initial: true,
-    );
-    
     final double indentSize = context.knobs.slider(
       label: 'Indent Size',
       initial: 32.0,
       min: 16.0,
       max: 64.0,
     );
-    
+
     final bool expandedByDefault = context.knobs.boolean(
       label: 'Expanded by Default',
       initial: true,
@@ -71,7 +65,6 @@ class _SimpleTreeStoryState extends State<_SimpleTreeStory> {
         paths: paths,
         theme: TreeTheme(
           indentSize: indentSize,
-          showConnectors: showConnectors,
         ),
         expandedByDefault: expandedByDefault,
         itemBuilder: (context, path) => Text(
@@ -112,7 +105,7 @@ class _FileSystemStoryState extends State<_FileSystemStory> {
       label: 'Animate Expansion',
       initial: true,
     );
-    
+
     final bool enableDragAndDrop = context.knobs.boolean(
       label: 'Enable Drag & Drop',
       initial: true,
@@ -120,19 +113,24 @@ class _FileSystemStoryState extends State<_FileSystemStory> {
 
     return StoryWrapper(
       title: 'File System Tree',
-      description: 'Tree mimicking a file system with custom file and folder icons',
+      description:
+          'Tree mimicking a file system with custom file and folder icons',
       child: ReorderableTreeListView(
         paths: paths,
         animateExpansion: animateExpansion,
-        itemBuilder: (context, path) => StoryItemBuilder.buildFileItem(context, path),
-        folderBuilder: (context, path) => StoryItemBuilder.buildFolderItem(context, path),
-        onReorder: enableDragAndDrop ? (oldPath, newPath) {
-          setState(() {
-            paths.remove(oldPath);
-            paths.add(newPath);
-          });
-          StoryHelpers.mockReorderCallback(oldPath, newPath);
-        } : null,
+        itemBuilder: (context, path) =>
+            StoryItemBuilder.buildFileItem(context, path),
+        folderBuilder: (context, path) =>
+            StoryItemBuilder.buildFolderItem(context, path),
+        onReorder: enableDragAndDrop
+            ? (oldPath, newPath) {
+                setState(() {
+                  paths.remove(oldPath);
+                  paths.add(newPath);
+                });
+                StoryHelpers.mockReorderCallback(oldPath, newPath);
+              }
+            : null,
         onExpandStart: StoryHelpers.createLoggingCallback('Expand Start'),
         onExpandEnd: StoryHelpers.createLoggingCallback('Expand End'),
         onCollapseStart: StoryHelpers.createLoggingCallback('Collapse Start'),
@@ -176,8 +174,10 @@ class _CustomBuildersStoryState extends State<_CustomBuildersStory> {
       description: 'Different item builder styles for various UI needs',
       child: ReorderableTreeListView(
         paths: paths,
-        itemBuilder: (context, path) => _buildCustomItem(context, path, builderStyle),
-        folderBuilder: (context, path) => _buildCustomFolder(context, path, builderStyle),
+        itemBuilder: (context, path) =>
+            _buildCustomItem(context, path, builderStyle),
+        folderBuilder: (context, path) =>
+            _buildCustomFolder(context, path, builderStyle),
         onReorder: (oldPath, newPath) {
           setState(() {
             paths.remove(oldPath);
@@ -191,13 +191,13 @@ class _CustomBuildersStoryState extends State<_CustomBuildersStory> {
 
   Widget _buildCustomItem(BuildContext context, Uri path, String style) {
     final String displayName = TreePath.getDisplayName(path);
-    
+
     switch (style) {
       case 'card':
         return Card(
-          margin: const EdgeInsets.symmetric(vertical: 2),
+          margin: const EdgeInsets.fromLTRB(8, 8, 32, 8),
           child: Padding(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             child: Row(
               children: [
                 const Icon(Icons.insert_drive_file, size: 16),
@@ -222,14 +222,14 @@ class _CustomBuildersStoryState extends State<_CustomBuildersStory> {
 
   Widget _buildCustomFolder(BuildContext context, Uri path, String style) {
     final String displayName = TreePath.getDisplayName(path);
-    
+
     switch (style) {
       case 'card':
         return Card(
-          margin: const EdgeInsets.symmetric(vertical: 2),
+          margin: const EdgeInsets.fromLTRB(8, 8, 32, 8),
           color: Theme.of(context).colorScheme.primaryContainer,
           child: Padding(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             child: Row(
               children: [
                 const Icon(Icons.folder, size: 16),

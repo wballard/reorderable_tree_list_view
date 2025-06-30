@@ -101,9 +101,6 @@ class TreeTheme {
   @override
   int get hashCode => Object.hash(
     indentSize,
-    connectorColor,
-    connectorWidth,
-    showConnectors,
     expandIconSize,
     itemPadding,
     borderRadius,

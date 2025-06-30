@@ -52,34 +52,11 @@ class _BasicThemingStoryState extends State<_BasicThemingStory> {
 
   @override
   Widget build(BuildContext context) {
-    final bool showConnectors = context.knobs.boolean(
-      label: 'Show Connectors',
-      initial: true,
-    );
-    
     final double indentSize = context.knobs.slider(
       label: 'Indent Size',
       initial: 32.0,
       min: 16.0,
       max: 64.0,
-    );
-    
-    final double connectorWidth = context.knobs.slider(
-      label: 'Connector Width',
-      initial: 1.0,
-      min: 0.5,
-      max: 4.0,
-    );
-
-    final Color connectorColor = context.knobs.options(
-      label: 'Connector Color',
-      initial: Colors.grey,
-      options: [
-        const Option(label: 'Grey', value: Colors.grey),
-        const Option(label: 'Blue', value: Colors.blue),
-        const Option(label: 'Green', value: Colors.green),
-        const Option(label: 'Purple', value: Colors.purple),
-      ],
     );
 
     return StoryWrapper(
@@ -89,9 +66,6 @@ class _BasicThemingStoryState extends State<_BasicThemingStory> {
         paths: paths,
         theme: TreeTheme(
           indentSize: indentSize,
-          showConnectors: showConnectors,
-          connectorWidth: connectorWidth,
-          connectorColor: connectorColor.withValues(alpha: 0.6),
         ),
         itemBuilder: (context, path) => StoryItemBuilder.buildFileItem(context, path),
         folderBuilder: (context, path) => StoryItemBuilder.buildFolderItem(context, path),
@@ -166,9 +140,6 @@ class _AdvancedStylingStoryState extends State<_AdvancedStylingStory> {
       case 'rounded':
         return TreeTheme(
           indentSize: 32.0,
-          showConnectors: true,
-          connectorColor: Colors.blue.withValues(alpha: 0.4),
-          connectorWidth: 2.0,
           itemPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           borderRadius: BorderRadius.circular(borderRadius),
           hoverColor: Colors.blue.withValues(alpha: 0.08),
@@ -179,7 +150,6 @@ class _AdvancedStylingStoryState extends State<_AdvancedStylingStory> {
       case 'minimal':
         return TreeTheme(
           indentSize: 24.0,
-          showConnectors: false,
           itemPadding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
           borderRadius: BorderRadius.circular(borderRadius),
           hoverColor: Colors.grey.withValues(alpha: 0.04),
@@ -190,9 +160,6 @@ class _AdvancedStylingStoryState extends State<_AdvancedStylingStory> {
       case 'colorful':
         return TreeTheme(
           indentSize: 40.0,
-          showConnectors: true,
-          connectorColor: const Color(0xFF9C27B0), // Purple color instead of rainbow
-          connectorWidth: 3.0,
           itemPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
           borderRadius: BorderRadius.circular(borderRadius),
           hoverColor: Colors.purple.withValues(alpha: 0.08),
@@ -204,7 +171,6 @@ class _AdvancedStylingStoryState extends State<_AdvancedStylingStory> {
       default:
         return TreeTheme(
           indentSize: 32.0,
-          showConnectors: true,
           borderRadius: BorderRadius.circular(borderRadius),
         );
     }
@@ -241,9 +207,6 @@ class _DarkModeStoryState extends State<_DarkModeStory> {
     if (useCustomDarkTheme && isDark) {
       theme = TreeTheme(
         indentSize: 32.0,
-        showConnectors: true,
-        connectorColor: Colors.cyan.withValues(alpha: 0.6),
-        connectorWidth: 2.0,
         itemPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
         borderRadius: const BorderRadius.all(Radius.circular(8.0)),
         hoverColor: Colors.cyan.withValues(alpha: 0.08),
@@ -254,7 +217,6 @@ class _DarkModeStoryState extends State<_DarkModeStory> {
     } else {
       theme = TreeTheme(
         indentSize: 32.0,
-        showConnectors: true,
       );
     }
 
@@ -357,9 +319,6 @@ class _MaterialDesignStoryState extends State<_MaterialDesignStory> {
         paths: paths,
         theme: TreeTheme(
           indentSize: 32.0,
-          showConnectors: true,
-          connectorColor: accentColor.withValues(alpha: 0.6),
-          connectorWidth: 2.0,
           itemPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           borderRadius: const BorderRadius.all(Radius.circular(12.0)),
           hoverColor: accentColor.withValues(alpha: 0.08),
@@ -449,8 +408,6 @@ class _CustomIndicatorsStoryState extends State<_CustomIndicatorsStory> {
         paths: paths,
         theme: TreeTheme(
           indentSize: 32.0,
-          showConnectors: true,
-          connectorColor: Colors.blue.withValues(alpha: 0.6),
         ),
         // Custom icons not currently supported - using default
         itemBuilder: (context, path) => StoryItemBuilder.buildFileItem(context, path),

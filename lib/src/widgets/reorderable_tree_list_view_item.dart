@@ -5,12 +5,11 @@ import 'package:reorderable_tree_list_view/src/intents/collapse_node_intent.dart
 import 'package:reorderable_tree_list_view/src/intents/expand_node_intent.dart';
 import 'package:reorderable_tree_list_view/src/models/tree_node.dart';
 import 'package:reorderable_tree_list_view/src/theme/tree_theme.dart';
-import 'package:reorderable_tree_list_view/src/widgets/tree_connector_painter.dart';
 
 /// A widget that wraps content for display in a ReorderableTreeListView.
 ///
 /// This widget provides:
-/// - Proper indentation based on tree depth with visual tree connectors
+/// - Proper indentation based on tree depth
 /// - Material Design compliance with InkWell feedback and theming
 /// - Consistent layout structure for tree items
 /// - Integration with TreeTheme for customizable appearance
@@ -131,8 +130,6 @@ class ReorderableTreeListViewItem extends StatelessWidget {
 
     // Use TreeTheme values if available, fallback to defaults or Material theme
     final double indentSize = theme?.indentSize ?? indentWidth;
-    final bool showConnectors = theme?.showConnectors ?? false;
-    final bool connectors = showConnectors && node.depth > 0;
     final EdgeInsetsGeometry padding =
         theme?.itemPadding ??
         const EdgeInsets.symmetric(horizontal: 16, vertical: 8);
@@ -148,23 +145,9 @@ class ReorderableTreeListViewItem extends StatelessWidget {
 
     Widget content = Row(
       children: <Widget>[
-        // Indentation and connector lines
+        // Indentation
         SizedBox(
           width: node.depth * indentSize,
-          child: connectors
-              ? CustomPaint(
-                  painter: TreeConnectorPainter(
-                    depth: node.depth,
-                    indentSize: indentSize,
-                    connectorColor: theme?.connectorColor ?? Colors.grey,
-                    connectorWidth: theme?.connectorWidth ?? 1,
-                    hasChildren: hasChildren,
-                    isExpanded: isExpanded,
-                    isLastInLevel: isLastInLevel,
-                    parentConnections: parentConnections,
-                  ),
-                )
-              : const SizedBox.shrink(),
         ),
         // Expansion icon for nodes with children
         if (hasChildren) ...<Widget>[

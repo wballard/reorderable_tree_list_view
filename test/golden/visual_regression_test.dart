@@ -46,10 +46,7 @@ void main() {
           body: ReorderableTreeListView(
             paths: TestUtils.sampleFilePaths,
             expandedByDefault: true,
-            theme: const TreeTheme(
-              showConnectors: true,
-              connectorColor: Colors.grey,
-            ),
+            theme: const TreeTheme(),
             itemBuilder: (BuildContext context, Uri path) => Row(
               children: [
                 const Icon(Icons.insert_drive_file, size: 20),
@@ -84,7 +81,6 @@ void main() {
           body: ReorderableTreeListView(
             paths: TestUtils.sampleFilePaths,
             theme: TreeTheme(
-              connectorColor: Colors.grey[700]!,
               hoverColor: Colors.white.withValues(alpha: 0.1),
               focusColor: Colors.white.withValues(alpha: 0.2),
             ),
@@ -228,9 +224,6 @@ void main() {
             expandedByDefault: true,
             theme: const TreeTheme(
               indentSize: 48,
-              showConnectors: true,
-              connectorColor: Colors.indigo,
-              connectorWidth: 2,
             ),
             itemBuilder: (BuildContext context, Uri path) => Row(
               children: [

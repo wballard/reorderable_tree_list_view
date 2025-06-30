@@ -488,9 +488,6 @@ class _HighContrastStoryState extends State<_HighContrastStory> {
     final TreeTheme theme = useHighContrast
         ? TreeTheme(
             indentSize: 40.0,
-            showConnectors: true,
-            connectorColor: Colors.black,
-            connectorWidth: 3.0,
             itemPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             borderRadius: const BorderRadius.all(Radius.circular(4.0)),
             hoverColor: Colors.yellow.withValues(alpha: 0.3),
