@@ -1,14 +1,14 @@
 # ReorderableTreeListView
 
 [![pub package](https://img.shields.io/pub/v/reorderable_tree_list_view.svg)](https://pub.dev/packages/reorderable_tree_list_view)
-[![Flutter CI](https://github.com/yourusername/reorderable_tree_list_view/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/reorderable_tree_list_view/actions)
-[![codecov](https://codecov.io/gh/yourusername/reorderable_tree_list_view/branch/main/graph/badge.svg)](https://codecov.io/gh/yourusername/reorderable_tree_list_view)
+[![Flutter CI](https://github.com/yourusername/reorderable_tree_list_view/actions/workflows/ci.yml/badge.svg)](https://github.com/wballard/reorderable_tree_list_view/actions)
+[![codecov](https://codecov.io/gh/yourusername/reorderable_tree_list_view/branch/main/graph/badge.svg)](https://codecov.io/gh/wballard/reorderable_tree_list_view)
 [![style: flutter_lints](https://img.shields.io/badge/style-flutter__lints-4BC0F5.svg)](https://pub.dev/packages/flutter_lints)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A high-performance Flutter widget that displays hierarchical data in a tree structure with drag-and-drop reordering capabilities. Built on top of Flutter's ReorderableListView, it provides a smooth and intuitive user experience.
 
-![ReorderableTreeListView Demo](https://raw.githubusercontent.com/yourusername/reorderable_tree_list_view/main/doc/demo.gif)
+![ReorderableTreeListView Demo](https://raw.githubusercontent.com/wballard/reorderable_tree_list_view/main/doc/demo.gif)
 
 ## ✨ Features
 
