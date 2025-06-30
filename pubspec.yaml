@@ -1,10 +1,10 @@
 name: reorderable_tree_list_view
 description: "A high-performance Flutter tree view widget with drag-and-drop reordering, automatic tree generation from URI paths, keyboard navigation, and comprehensive accessibility support."
 version: 0.0.1
-homepage: https://github.com/yourusername/reorderable_tree_list_view
-repository: https://github.com/yourusername/reorderable_tree_list_view
-issue_tracker: https://github.com/yourusername/reorderable_tree_list_view/issues
-documentation: https://yourusername.github.io/reorderable_tree_list_view/docs
+homepage: https://github.com/wballard/reorderable_tree_list_view
+repository: https://github.com/wballard/reorderable_tree_list_view
+issue_tracker: https://github.com/wballard/reorderable_tree_list_view/issues
+documentation: https://wballard.github.io/reorderable_tree_list_view/docs
 
 topics:
   - tree-view

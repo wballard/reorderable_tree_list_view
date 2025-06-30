@@ -1,8 +1,8 @@
 # ReorderableTreeListView
 
 [![pub package](https://img.shields.io/pub/v/reorderable_tree_list_view.svg)](https://pub.dev/packages/reorderable_tree_list_view)
-[![Flutter CI](https://github.com/yourusername/reorderable_tree_list_view/actions/workflows/ci.yml/badge.svg)](https://github.com/wballard/reorderable_tree_list_view/actions)
-[![codecov](https://codecov.io/gh/yourusername/reorderable_tree_list_view/branch/main/graph/badge.svg)](https://codecov.io/gh/wballard/reorderable_tree_list_view)
+[![Flutter CI](https://github.com/wballard/reorderable_tree_list_view/actions/workflows/ci.yml/badge.svg)](https://github.com/wballard/reorderable_tree_list_view/actions)
+[![codecov](https://codecov.io/gh/wballard/reorderable_tree_list_view/branch/main/graph/badge.svg)](https://codecov.io/gh/wballard/reorderable_tree_list_view)
 [![style: flutter_lints](https://img.shields.io/badge/style-flutter__lints-4BC0F5.svg)](https://pub.dev/packages/flutter_lints)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -195,7 +195,7 @@ Check out the [example](example/) directory for complete examples:
 
 ### Live Demo
 
-Visit our [interactive Storybook demo](https://yourusername.github.io/reorderable_tree_list_view) to see all features in action.
+Visit our [interactive Storybook demo](https://wballard.github.io/reorderable_tree_list_view) to see all features in action.
 
 ## 🔧 Performance
 
@@ -315,10 +315,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- 📧 Email: support@example.com
-- 💬 Discord: [Join our community](https://discord.gg/example)
-- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/reorderable_tree_list_view/issues)
-- 📖 Docs: [Full Documentation](https://yourusername.github.io/reorderable_tree_list_view/docs)
+- 🐛 Issues: [GitHub Issues](https://github.com/wballard/reorderable_tree_list_view/issues)
+- 📖 Docs: [Full Documentation](https://wballard.github.io/reorderable_tree_list_view/docs)
 
 ---
 

@@ -103,7 +103,7 @@ To build for web deployment:
 
 ```bash
 cd example
-flutter build web --web-renderer html --release
+flutter build web 
 ```
 
 The built files will be in `build/web/` directory.
