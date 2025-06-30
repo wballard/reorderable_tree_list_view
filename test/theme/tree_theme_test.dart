@@ -8,9 +8,6 @@ void main() {
       const TreeTheme theme = TreeTheme();
 
       expect(theme.indentSize, equals(24));
-      expect(theme.connectorColor, equals(Colors.grey));
-      expect(theme.connectorWidth, equals(1));
-      expect(theme.showConnectors, isTrue);
       expect(theme.expandIconSize, equals(24));
       expect(
         theme.itemPadding,
@@ -26,9 +23,6 @@ void main() {
     test('should create with custom values', () {
       final TreeTheme theme = TreeTheme(
         indentSize: 32,
-        connectorColor: Colors.blue,
-        connectorWidth: 2,
-        showConnectors: false,
         expandIconSize: 20,
         itemPadding: const EdgeInsets.all(12),
         borderRadius: const BorderRadius.all(Radius.circular(8)),
@@ -39,9 +33,6 @@ void main() {
       );
 
       expect(theme.indentSize, equals(32));
-      expect(theme.connectorColor, equals(Colors.blue));
-      expect(theme.connectorWidth, equals(2));
-      expect(theme.showConnectors, isFalse);
       expect(theme.expandIconSize, equals(20));
       expect(theme.itemPadding, equals(const EdgeInsets.all(12)));
       expect(
@@ -76,13 +67,22 @@ void main() {
       const TreeTheme original = TreeTheme();
       final TreeTheme modified = original.copyWith(
         indentSize: 32,
-        connectorColor: Colors.red,
+        expandIconSize: 20,
       );
 
       expect(modified.indentSize, equals(32));
-      expect(modified.connectorColor, equals(Colors.red));
-      expect(modified.connectorWidth, equals(original.connectorWidth));
-      expect(modified.showConnectors, equals(original.showConnectors));
+      expect(modified.expandIconSize, equals(20));
+      expect(modified.itemPadding, equals(original.itemPadding));
+    });
+
+    test('should not have any connector-related properties', () {
+      // This test ensures that all connector-related properties have been eliminated
+      const TreeTheme theme = TreeTheme();
+      
+      // This test will fail when we try to access removed properties
+      expect(() => (theme as dynamic).connectorColor, throwsA(isA<NoSuchMethodError>()));
+      expect(() => (theme as dynamic).connectorWidth, throwsA(isA<NoSuchMethodError>()));
+      expect(() => (theme as dynamic).showConnectors, throwsA(isA<NoSuchMethodError>()));
     });
 
     testWidgets('should be accessible via InheritedWidget', (

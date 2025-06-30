@@ -9,9 +9,6 @@ class TreeTheme {
   /// Creates a tree theme.
   const TreeTheme({
     this.indentSize = 24,
-    this.connectorColor = Colors.grey,
-    this.connectorWidth = 1,
-    this.showConnectors = true,
     this.expandIconSize = 24,
     this.itemPadding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     this.borderRadius = BorderRadius.zero,
@@ -32,15 +29,6 @@ class TreeTheme {
 
   /// The indentation size for each level of nesting.
   final double indentSize;
-
-  /// The color of tree connectors.
-  final Color connectorColor;
-
-  /// The width of tree connectors.
-  final double connectorWidth;
-
-  /// Whether to show connecting lines between tree items.
-  final bool showConnectors;
 
   /// The size of expand/collapse icons.
   final double expandIconSize;
@@ -75,9 +63,6 @@ class TreeTheme {
   /// Creates a copy of this theme with the given fields replaced with new values.
   TreeTheme copyWith({
     double? indentSize,
-    Color? connectorColor,
-    double? connectorWidth,
-    bool? showConnectors,
     double? expandIconSize,
     EdgeInsetsGeometry? itemPadding,
     BorderRadiusGeometry? borderRadius,
@@ -87,9 +72,6 @@ class TreeTheme {
     Color? highlightColor,
   }) => TreeTheme(
     indentSize: indentSize ?? this.indentSize,
-    connectorColor: connectorColor ?? this.connectorColor,
-    connectorWidth: connectorWidth ?? this.connectorWidth,
-    showConnectors: showConnectors ?? this.showConnectors,
     expandIconSize: expandIconSize ?? this.expandIconSize,
     itemPadding: itemPadding ?? this.itemPadding,
     borderRadius: borderRadius ?? this.borderRadius,
@@ -107,9 +89,6 @@ class TreeTheme {
 
     return other is TreeTheme &&
         other.indentSize == indentSize &&
-        other.connectorColor == connectorColor &&
-        other.connectorWidth == connectorWidth &&
-        other.showConnectors == showConnectors &&
         other.expandIconSize == expandIconSize &&
         other.itemPadding == itemPadding &&
         other.borderRadius == borderRadius &&
