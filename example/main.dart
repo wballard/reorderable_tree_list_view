@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:storybook_flutter/storybook_flutter.dart';
 
-import 'stories/basic_stories.dart';
-import 'stories/interaction_stories.dart';
-import 'stories/theme_stories.dart';
-import 'stories/data_stories.dart';
 import 'stories/accessibility_stories.dart';
 import 'stories/advanced_stories.dart';
+import 'stories/basic_stories.dart';
+import 'stories/data_stories.dart';
+import 'stories/interaction_stories.dart';
+import 'stories/theme_stories.dart';
 
 void main() {
   runApp(const StorybookApp());
@@ -36,35 +36,32 @@ class StorybookApp extends StatelessWidget {
         home: child,
         debugShowCheckedModeBanner: false,
       ),
-      
       plugins: [
         DeviceFramePlugin(),
         ThemeModePlugin(),
-        KnobsPlugin(),
       ],
-      
       stories: [
         // Welcome story
         Story(
           name: 'Welcome',
           builder: (context) => _WelcomeStory(),
         ),
-        
+
         // Basic examples
         ...basicStories,
-        
+
         // Interaction examples
         ...interactionStories,
-        
+
         // Theme examples
         ...themeStories,
-        
+
         // Data scenarios
         ...dataStories,
-        
+
         // Accessibility examples
         ...accessibilityStories,
-        
+
         // Advanced examples
         ...advancedStories,
       ],
@@ -90,8 +87,8 @@ class _WelcomeStory extends StatelessWidget {
             Text(
               'ReorderableTreeListView',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 8),
             Text(
@@ -99,24 +96,24 @@ class _WelcomeStory extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 32),
-            
+
             // Key Features
             Text(
               'Key Features',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 16),
             ..._buildFeatureList(context),
             const SizedBox(height: 32),
-            
+
             // Quick Start
             Text(
               'Quick Start',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 16),
             Container(
@@ -141,18 +138,18 @@ class _WelcomeStory extends StatelessWidget {
   },
 )''',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontFamily: 'monospace',
-                ),
+                      fontFamily: 'monospace',
+                    ),
               ),
             ),
             const SizedBox(height: 32),
-            
+
             // Story Categories
             Text(
               'Story Categories',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 16),
             ..._buildStoryCategoryList(context),
@@ -161,7 +158,7 @@ class _WelcomeStory extends StatelessWidget {
       ),
     );
   }
-  
+
   List<Widget> _buildFeatureList(BuildContext context) {
     final features = [
       'Hierarchical tree display with automatic grouping',
@@ -175,52 +172,59 @@ class _WelcomeStory extends StatelessWidget {
       'Event handling with callbacks and Actions/Intents',
       'Performance optimized for large datasets',
     ];
-    
-    return features.map((feature) => Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            Icons.check_circle,
-            color: Theme.of(context).colorScheme.primary,
-            size: 16,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              feature,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ),
-        ],
-      ),
-    )).toList();
+
+    return features
+        .map((feature) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.check_circle,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      feature,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                ],
+              ),
+            ))
+        .toList();
   }
-  
+
   List<Widget> _buildStoryCategoryList(BuildContext context) {
     final categories = [
       ('Basic Stories', 'Simple tree examples and getting started'),
       ('Interaction Stories', 'Drag/drop, selection, and user interactions'),
       ('Theme Stories', 'Theming and visual customization'),
       ('Data Stories', 'Different data scenarios and use cases'),
-      ('Accessibility Stories', 'Keyboard navigation and screen reader support'),
-    ];
-    
-    return categories.map((category) => Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: Icon(
-          Icons.folder,
-          color: Theme.of(context).colorScheme.primary,
-        ),
-        title: Text(
-          category.$1,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Text(category.$2),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+      (
+        'Accessibility Stories',
+        'Keyboard navigation and screen reader support'
       ),
-    )).toList();
+    ];
+
+    return categories
+        .map((category) => Card(
+              margin: const EdgeInsets.only(bottom: 8),
+              child: ListTile(
+                leading: Icon(
+                  Icons.folder,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                title: Text(
+                  category.$1,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(category.$2),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              ),
+            ))
+        .toList();
   }
 }
