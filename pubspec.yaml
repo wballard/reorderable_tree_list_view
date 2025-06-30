@@ -13,14 +13,6 @@ topics:
   - hierarchical
   - widget
 
-screenshots:
-  - description: 'Tree view with drag and drop reordering'
-    path: doc/screenshots/drag_drop.png
-  - description: 'Multiple selection and keyboard navigation'
-    path: doc/screenshots/selection.png
-  - description: 'Custom themes and styling'
-    path: doc/screenshots/themes.png
-
 environment:
   sdk: ^3.8.1
   flutter: ">=3.16.0"

@@ -2,7 +2,7 @@ name: Deploy Storybook to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -20,31 +20,28 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
       - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.22.0'
-          channel: 'stable'
-          
+        uses: kuhnroyal/flutter-fvm-config-action/setup@v3
+
       - name: Install dependencies
         run: |
           cd example
           flutter pub get
-          
+
       - name: Build web
         run: |
           cd example
           flutter build web --web-renderer html --release --base-href /${{ github.event.repository.name }}/
-          
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
-        
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'example/build/web'
-          
+          path: "example/build/web"
+
   deploy:
     environment:
       name: github-pages
