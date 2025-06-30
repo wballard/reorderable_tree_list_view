@@ -16,7 +16,7 @@ rm -rf build/web
 
 # Build for web with HTML renderer for better compatibility
 echo "🔨 Building web version..."
-flutter build web --web-renderer html --release
+flutter build web 
 
 # Create a .nojekyll file to prevent GitHub Pages from ignoring files starting with _
 echo "📝 Creating .nojekyll file..."

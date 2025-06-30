@@ -32,7 +32,7 @@ jobs:
       - name: Build web
         run: |
           cd example
-          flutter build web --web-renderer html --release --base-href /${{ github.event.repository.name }}/
+          flutter build web --base-href /${{ github.event.repository.name }}/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
