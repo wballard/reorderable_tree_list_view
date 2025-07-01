@@ -204,6 +204,32 @@ class _SelectionStoryState extends State<_SelectionStory> {
       description: 'Different selection behaviors for tree items',
       child: Column(
         children: [
+          // Instructions based on selection mode
+          if (mode == SelectionMode.multiple)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Multiple Selection Instructions:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text('• Click: Select single item (replace previous selection)'),
+                  const Text('• Ctrl+Click: Add/remove item from selection'),
+                  const Text('• Shift+Click: Select range from last selected item'),
+                  const Text('• Space: Toggle selection of focused item'),
+                ],
+              ),
+            ),
+          if (mode == SelectionMode.multiple) const SizedBox(height: 16),
+          
           // Selection info
           if (selectedPaths.isNotEmpty)
             Container(

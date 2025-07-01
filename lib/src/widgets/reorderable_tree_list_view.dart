@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:reorderable_tree_list_view/src/actions/activate_node_action.dart';
 import 'package:reorderable_tree_list_view/src/actions/select_node_action.dart';
 import 'package:reorderable_tree_list_view/src/core/drag_drop_handler.dart';
@@ -546,9 +547,19 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
             _eventController.notifyItemTap(node.path);
             if (widget.selectionMode != SelectionMode.none) {
               _keyboardController.setFocus(node.path);
-              if (widget.selectionMode == SelectionMode.single) {
-                _keyboardController.updateSelection(<Uri>{node.path});
-              }
+              
+              // Check for modifier keys
+              final bool isShiftPressed = HardwareKeyboard.instance.isShiftPressed;
+              final bool isControlPressed = HardwareKeyboard.instance.isControlPressed ||
+                  HardwareKeyboard.instance.isMetaPressed;
+              
+              // Handle selection with modifier key support
+              _keyboardController.handleItemClick(
+                node.path,
+                isShiftPressed: isShiftPressed,
+                isControlPressed: isControlPressed,
+                visibleNodes: visibleNodes,
+              );
             }
           },
           onContextMenu: widget.onContextMenu != null

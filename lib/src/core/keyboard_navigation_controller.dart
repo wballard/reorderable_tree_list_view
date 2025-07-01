@@ -12,7 +12,7 @@ class KeyboardNavigationController extends ChangeNotifier {
     required this.selectionMode,
     Set<Uri>? initialSelection,
     this.onItemActivated,
-  }) : _selectedPaths = initialSelection ?? <Uri>{};
+  }) : _selectedPaths = Set<Uri>.from(initialSelection ?? <Uri>{});
 
   /// The tree state to navigate.
   TreeState treeState;
@@ -349,6 +349,43 @@ class KeyboardNavigationController extends ChangeNotifier {
   void clearSelection() {
     _selectedPaths.clear();
     _selectionAnchor = null;
+    notifyListeners();
+  }
+
+  /// Handles a click on an item with modifier key support.
+  /// 
+  /// This method should be called when an item is clicked to properly
+  /// handle selection based on the current selection mode and modifier keys.
+  void handleItemClick(Uri path, {
+    bool isShiftPressed = false,
+    bool isControlPressed = false,
+    List<TreeNode>? visibleNodes,
+  }) {
+    if (selectionMode == SelectionMode.none) {
+      return; // No selection allowed
+    }
+
+    if (selectionMode == SelectionMode.single) {
+      // Single selection mode - always replace selection
+      _setSingleSelection(path);
+    } else if (selectionMode == SelectionMode.multiple) {
+      if (isShiftPressed && visibleNodes != null) {
+        // Range selection - extend from anchor to clicked item
+        _extendSelection(path, visibleNodes);
+      } else if (isControlPressed) {
+        // Toggle selection - add/remove clicked item
+        if (_selectedPaths.contains(path)) {
+          _selectedPaths.remove(path);
+        } else {
+          _selectedPaths.add(path);
+        }
+        _selectionAnchor = path;
+      } else {
+        // Normal click - replace selection with clicked item
+        _setSingleSelection(path);
+      }
+    }
+
     notifyListeners();
   }
 }
