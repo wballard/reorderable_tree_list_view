@@ -104,9 +104,10 @@ class _DragDropStoryState extends State<_DragDropStory> {
           Expanded(
             child: ReorderableTreeListView(
               paths: paths,
+              enableDragAndDrop: enableDragDrop,
               itemBuilder: (context, path) => StoryItemBuilder.buildFileItem(context, path),
               folderBuilder: (context, path) => StoryItemBuilder.buildFolderItem(context, path),
-              onReorder: enableDragDrop ? (oldPath, newPath) {
+              onReorder: (oldPath, newPath) {
                 setState(() {
                   paths.remove(oldPath);
                   paths.add(newPath);
@@ -119,19 +120,19 @@ class _DragDropStoryState extends State<_DragDropStory> {
                   }
                   _dragStatus = null;
                 });
-              } : null,
-              onDragStart: enableDragDrop ? (path) {
+              },
+              onDragStart: (path) {
                 setState(() {
                   _dragStatus = 'Dragging: ${TreePath.getDisplayName(path)}';
                 });
-              } : null,
-              onDragEnd: enableDragDrop ? (path) {
+              },
+              onDragEnd: (path) {
                 setState(() {
                   if (_dragStatus?.contains('Dragging') ?? false) {
                     _dragStatus = 'Drag completed';
                   }
                 });
-              } : null,
+              },
               proxyDecorator: showDragFeedback ? (child, index, animation) {
                 return AnimatedBuilder(
                   animation: animation,

@@ -128,35 +128,36 @@ class _FileSystemStoryState extends State<_FileSystemStory> {
       child: ReorderableTreeListView(
         paths: paths,
         animateExpansion: animateExpansion,
+        enableDragAndDrop: enableDragAndDrop,
         itemBuilder: (context, path) =>
             StoryItemBuilder.buildFileItem(context, path),
         folderBuilder: (context, path) =>
             StoryItemBuilder.buildFolderItem(context, path),
-        onReorder: enableDragAndDrop
-            ? (oldPath, newPath) {
-                setState(() {
-                  // Remove the old path
-                  paths.remove(oldPath);
-                  
-                  // If this is a folder (has children), also update all children
-                  final List<Uri> childPaths = paths.where((path) {
-                    return path.toString().startsWith(oldPath.toString() + '/');
-                  }).toList();
-                  
-                  for (final childPath in childPaths) {
-                    paths.remove(childPath);
-                    // Calculate new child path
-                    final String relativePath = childPath.toString().substring(oldPath.toString().length);
-                    final Uri newChildPath = Uri.parse(newPath.toString() + relativePath);
-                    paths.add(newChildPath);
-                  }
-                  
-                  // Add the new path
-                  paths.add(newPath);
-                });
-                StoryHelpers.mockReorderCallback(oldPath, newPath);
-              }
-            : null,
+        onReorder: (oldPath, newPath) {
+          setState(() {
+            // Remove the old path
+            paths.remove(oldPath);
+            
+            // If this is a folder (has children), also update all children
+            final List<Uri> childPaths = paths.where((path) {
+              return path.toString().startsWith(oldPath.toString() + '/');
+            }).toList();
+            
+            for (final childPath in childPaths) {
+              paths.remove(childPath);
+              // Calculate new child path
+              final String relativePath = childPath.toString().substring(oldPath.toString().length);
+              final Uri newChildPath = Uri.parse(newPath.toString() + relativePath);
+              paths.add(newChildPath);
+            }
+            
+            // Add the new path
+            paths.add(newPath);
+          });
+          StoryHelpers.mockReorderCallback(oldPath, newPath);
+        },
+        onDragStart: StoryHelpers.createLoggingCallback('Drag Start'),
+        onDragEnd: StoryHelpers.createLoggingCallback('Drag End'),
         onExpandStart: StoryHelpers.createLoggingCallback('Expand Start'),
         onExpandEnd: StoryHelpers.createLoggingCallback('Expand End'),
         onCollapseStart: StoryHelpers.createLoggingCallback('Collapse Start'),

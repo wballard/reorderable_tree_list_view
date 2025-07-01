@@ -40,6 +40,7 @@ class ReorderableTreeListView extends StatefulWidget {
     this.physics,
     this.initiallyExpanded,
     this.animateExpansion = true,
+    this.enableDragAndDrop = true,
     this.onReorder,
     this.onDragStart,
     this.onDragEnd,
@@ -107,6 +108,12 @@ class ReorderableTreeListView extends StatefulWidget {
   /// If true, expanding and collapsing folders will be animated.
   /// If false, changes will be immediate.
   final bool animateExpansion;
+
+  /// Whether to enable drag and drop functionality.
+  ///
+  /// If true, drag handles are shown and items can be dragged and reordered.
+  /// If false, no drag handles are shown and drag operations are disabled.
+  final bool enableDragAndDrop;
 
   /// Called when an item is reordered via drag and drop.
   ///
@@ -502,7 +509,7 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
       scrollDirection: widget.scrollDirection,
       shrinkWrap: widget.shrinkWrap,
       padding: widget.padding as EdgeInsets?,
-      // buildDefaultDragHandles defaults to true, so no need to specify
+      buildDefaultDragHandles: widget.enableDragAndDrop,
       itemCount: visibleNodes.length,
       itemBuilder: (BuildContext context, int index) {
         final TreeNode node = visibleNodes[index];
@@ -552,10 +559,12 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
           child: userContent,
         );
       },
-      onReorder: (int oldIndex, int newIndex) {
+      onReorder: widget.enableDragAndDrop ? (int oldIndex, int newIndex) {
         _handleReorder(oldIndex, newIndex, visibleNodes);
+      } : (int oldIndex, int newIndex) {
+        // No-op when drag and drop is disabled
       },
-      onReorderStart: (int index) {
+      onReorderStart: widget.enableDragAndDrop ? (int index) {
         final Uri path = visibleNodes[index].path;
         _draggingPath = path;
         // Check if drag is allowed
@@ -563,13 +572,13 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
           // no op
         }
         _eventController.notifyDragStart(path);
-      },
-      onReorderEnd: (int index) {
+      } : null,
+      onReorderEnd: widget.enableDragAndDrop ? (int index) {
         if (_draggingPath != null) {
           _eventController.notifyDragEnd(_draggingPath!);
           _draggingPath = null;
         }
-      },
+      } : null,
       proxyDecorator: widget.proxyDecorator,
     );
 
