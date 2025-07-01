@@ -19,7 +19,8 @@ final List<Story> themeStories = [
   Story(
     name: 'Theme/Dark Mode',
     description: 'Dark mode theming showcase',
-    builder: (context) => const _DarkModeStory(),
+    // Note: Do not use const here - it prevents knob changes from rebuilding
+    builder: (context) => _DarkModeStory(),
   ),
   Story(
     name: 'Theme/Material Design',
@@ -196,27 +197,28 @@ class _DarkModeStoryState extends State<_DarkModeStory> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    
     final bool useCustomDarkTheme = context.knobs.boolean(
       label: 'Use Custom Dark Theme',
       initial: true,
     );
 
     TreeTheme theme;
-    if (useCustomDarkTheme && isDark) {
+    if (useCustomDarkTheme) {
+      // Apply custom theme when knob is enabled, regardless of light/dark mode
       theme = TreeTheme(
-        indentSize: 32.0,
-        itemPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
-        borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-        hoverColor: Colors.cyan.withValues(alpha: 0.08),
-        focusColor: Colors.cyan.withValues(alpha: 0.16),
-        splashColor: Colors.cyan.withValues(alpha: 0.12),
-        highlightColor: Colors.cyan.withValues(alpha: 0.06),
+        indentSize: 48.0,  // More noticeable indent
+        itemPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),  // Larger padding
+        borderRadius: const BorderRadius.all(Radius.circular(16.0)),  // More rounded
+        hoverColor: Colors.cyan.withValues(alpha: 0.3),  // More visible hover
+        focusColor: Colors.cyan.withValues(alpha: 0.4),  // More visible focus
+        splashColor: Colors.cyan.withValues(alpha: 0.3),
+        highlightColor: Colors.cyan.withValues(alpha: 0.2),
       );
     } else {
       theme = TreeTheme(
-        indentSize: 32.0,
+        indentSize: 24.0,  // Smaller indent for contrast
+        itemPadding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),  // Smaller padding
+        borderRadius: BorderRadius.zero,  // No rounding
       );
     }
 
@@ -234,9 +236,9 @@ class _DarkModeStoryState extends State<_DarkModeStory> {
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
-              isDark
-                  ? 'Dark mode detected - ${useCustomDarkTheme ? "using custom theme" : "using default theme"}'
-                  : 'Light mode - switch to dark mode in device frame settings to see dark theme',
+              useCustomDarkTheme
+                  ? 'Using custom dark theme with cyan accents on dark background'
+                  : 'Using default light theme',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
@@ -244,22 +246,150 @@ class _DarkModeStoryState extends State<_DarkModeStory> {
           
           // Tree view
           Expanded(
-            child: ReorderableTreeListView(
-              paths: paths,
-              theme: theme,
-              itemBuilder: (context, path) => StoryItemBuilder.buildFileItem(context, path),
-              folderBuilder: (context, path) => StoryItemBuilder.buildFolderItem(context, path),
-              onReorder: (oldPath, newPath) {
-                setState(() {
-                  paths.remove(oldPath);
-                  paths.add(newPath);
-                });
-              },
+            child: Container(
+              decoration: BoxDecoration(
+                color: useCustomDarkTheme ? Colors.grey.shade900 : null,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Theme(
+                data: useCustomDarkTheme 
+                    ? ThemeData.dark().copyWith(
+                        // Dark theme overrides
+                        scaffoldBackgroundColor: Colors.grey.shade900,
+                        colorScheme: const ColorScheme.dark(
+                          primary: Colors.cyan,
+                          secondary: Colors.cyanAccent,
+                          surface: Colors.black87,
+                        ),
+                        listTileTheme: const ListTileThemeData(
+                          textColor: Colors.white,
+                          iconColor: Colors.white70,
+                        ),
+                      )
+                    : Theme.of(context),
+                child: ReorderableTreeListView(
+                  paths: paths,
+                  theme: theme,
+                  itemBuilder: (context, path) => useCustomDarkTheme
+                      ? _buildDarkThemeItem(context, path)
+                      : StoryItemBuilder.buildFileItem(context, path),
+                  folderBuilder: (context, path) => useCustomDarkTheme
+                      ? _buildDarkThemeFolder(context, path)
+                      : StoryItemBuilder.buildFolderItem(context, path),
+                  onReorder: (oldPath, newPath) {
+                    setState(() {
+                      paths.remove(oldPath);
+                      paths.add(newPath);
+                    });
+                  },
+                ),
+              ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildDarkThemeItem(BuildContext context, Uri path) {
+    final String displayName = TreePath.getDisplayName(path);
+    final String extension = displayName.split('.').last.toLowerCase();
+    final IconData icon = _getFileIcon(extension);
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: ListTile(
+        dense: true,
+        leading: Icon(
+          icon,
+          size: 20,
+          color: Colors.cyanAccent,
+        ),
+        title: Text(
+          displayName,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+          ),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+      ),
+    );
+  }
+
+  Widget _buildDarkThemeFolder(BuildContext context, Uri path) {
+    final String displayName = TreePath.getDisplayName(path);
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.cyan.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: ListTile(
+        dense: true,
+        leading: const Icon(
+          Icons.folder,
+          size: 20,
+          color: Colors.cyan,
+        ),
+        title: Text(
+          displayName,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+      ),
+    );
+  }
+
+  IconData _getFileIcon(String extension) {
+    switch (extension) {
+      case 'dart':
+        return Icons.code;
+      case 'js':
+      case 'ts':
+      case 'jsx':
+      case 'tsx':
+        return Icons.javascript;
+      case 'html':
+      case 'htm':
+        return Icons.html;
+      case 'css':
+        return Icons.css;
+      case 'json':
+      case 'yaml':
+      case 'yml':
+        return Icons.data_object;
+      case 'md':
+        return Icons.description;
+      case 'pdf':
+        return Icons.picture_as_pdf;
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
+        return Icons.image;
+      case 'mp3':
+      case 'wav':
+      case 'flac':
+        return Icons.music_note;
+      case 'mp4':
+      case 'avi':
+      case 'mov':
+        return Icons.video_file;
+      case 'zip':
+      case 'rar':
+      case '7z':
+        return Icons.archive;
+      default:
+        return Icons.insert_drive_file;
+    }
   }
 }
 

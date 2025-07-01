@@ -71,7 +71,7 @@ class _SimpleTreeStoryState extends State<_SimpleTreeStory> {
             
             // If this is a folder (has children), also update all children
             final List<Uri> childPaths = paths.where((path) {
-              return path.toString().startsWith(oldPath.toString() + '/');
+              return path.toString().startsWith('${oldPath.toString()}/');
             }).toList();
             
             for (final childPath in childPaths) {
@@ -140,7 +140,7 @@ class _FileSystemStoryState extends State<_FileSystemStory> {
             
             // If this is a folder (has children), also update all children
             final List<Uri> childPaths = paths.where((path) {
-              return path.toString().startsWith(oldPath.toString() + '/');
+              return path.toString().startsWith('${oldPath.toString()}/');
             }).toList();
             
             for (final childPath in childPaths) {

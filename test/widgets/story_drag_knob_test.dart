@@ -11,8 +11,6 @@ void main() {
       bool onReorderCalled = false;
       bool onDragStartCalled = false;
       bool onDragEndCalled = false;
-
-      const bool enableDragAndDrop = false;
       
       final paths = [
         Uri.parse('file://file1.txt'),
@@ -26,7 +24,7 @@ void main() {
             paths: paths,
             // Expand the root so we can see the files
             initiallyExpanded: {Uri.parse('file://')},
-            enableDragAndDrop: enableDragAndDrop,
+            enableDragAndDrop: false,
             itemBuilder: (context, path) => Text(TreePath.getDisplayName(path)),
             
             // FIXED: Drag functionality is now controlled by enableDragAndDrop parameter
@@ -125,8 +123,6 @@ void main() {
       // This test demonstrates what the bug was before the enableDragAndDrop parameter existed
       // Stories would set callbacks to null to try to disable drag, but drag handles still appeared
       
-      const bool enableDragAndDrop = false;
-      
       final paths = [
         Uri.parse('file://file1.txt'),
         Uri.parse('file://file2.txt'),
@@ -143,24 +139,12 @@ void main() {
             itemBuilder: (context, path) => Text(TreePath.getDisplayName(path)),
             
             // Stories tried to disable drag by setting callbacks to null
-            onReorder: enableDragAndDrop
-                ? (oldPath, newPath) {
-                    // Would have done something here
-                  }
-                : null,
+            onReorder: null, // Explicitly null to test the old buggy behavior
                 
             // BUG: Even with null callbacks, drag handles were still visible
             // and drag gestures would still trigger internal ReorderableListView logic
-            onDragStart: enableDragAndDrop
-                ? (path) {
-                    // Would have done something here
-                  }
-                : null,
-            onDragEnd: enableDragAndDrop
-                ? (path) {
-                    // Would have done something here
-                  }
-                : null,
+            onDragStart: null, // Explicitly null to test the old buggy behavior
+            onDragEnd: null, // Explicitly null to test the old buggy behavior
           ),
         ),
       );
