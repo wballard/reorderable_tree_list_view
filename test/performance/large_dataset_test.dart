@@ -59,6 +59,7 @@ void main() {
       
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: largePaths,
+        initiallyExpanded: <Uri>{Uri.parse('file:///')},
       ));
 
       // Verify that folders are generated and visible
@@ -98,6 +99,7 @@ void main() {
       
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: paths,
+        initiallyExpanded: <Uri>{Uri.parse('file:///')},
         itemBuilder: (context, path) {
           buildCount++;
           return Text(TreePath.getDisplayName(path));
@@ -164,6 +166,7 @@ void main() {
       
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: deepPaths,
+        initiallyExpanded: <Uri>{Uri.parse('file:///')},
       ));
       
       stopwatch.stop();

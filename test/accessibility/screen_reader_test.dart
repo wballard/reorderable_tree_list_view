@@ -10,6 +10,12 @@ void main() {
     testWidgets('should provide semantic labels for all items', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
+        initiallyExpanded: <Uri>{
+          Uri.parse('file:///'),
+          Uri.parse('file:///folder1'),
+          Uri.parse('file:///folder2'),
+          Uri.parse('file:///folder2/subfolder'),
+        },
       ));
 
       // Check each item has semantic label
@@ -25,6 +31,12 @@ void main() {
     testWidgets('should announce tree structure', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
+        initiallyExpanded: <Uri>{
+          Uri.parse('file:///'),
+          Uri.parse('file:///folder1'),
+          Uri.parse('file:///folder2'),
+          Uri.parse('file:///folder2/subfolder'),
+        },
       ));
 
       // Check folder semantics
@@ -40,6 +52,12 @@ void main() {
     testWidgets('should announce expansion state changes', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
+        initiallyExpanded: <Uri>{
+          Uri.parse('file:///'),
+          Uri.parse('file:///folder1'),
+          Uri.parse('file:///folder2'),
+          Uri.parse('file:///folder2/subfolder'),
+        },
         onExpandStart: (Uri path) {
           // Verify expansion announcements are made
         },
@@ -59,6 +77,12 @@ void main() {
     testWidgets('should provide context for drag operations', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
+        initiallyExpanded: <Uri>{
+          Uri.parse('file:///'),
+          Uri.parse('file:///folder1'),
+          Uri.parse('file:///folder2'),
+          Uri.parse('file:///folder2/subfolder'),
+        },
         onReorder: (Uri oldPath, Uri newPath) {},
       ));
 
@@ -75,6 +99,12 @@ void main() {
     testWidgets('should announce selection changes', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
+        initiallyExpanded: <Uri>{
+          Uri.parse('file:///'),
+          Uri.parse('file:///folder1'),
+          Uri.parse('file:///folder2'),
+          Uri.parse('file:///folder2/subfolder'),
+        },
         selectionMode: SelectionMode.multiple,
         onSelectionChanged: (Set<Uri> selection) {}, // Verify selection announcements
       ));
@@ -92,6 +122,12 @@ void main() {
     testWidgets('should provide helpful hints', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
+        initiallyExpanded: <Uri>{
+          Uri.parse('file:///'),
+          Uri.parse('file:///folder1'),
+          Uri.parse('file:///folder2'),
+          Uri.parse('file:///folder2/subfolder'),
+        },
         itemBuilder: (BuildContext context, Uri path) => Semantics(
           hint: 'Double tap to open',
           child: Text(TreePath.getDisplayName(path)),
@@ -121,6 +157,12 @@ void main() {
         builder: (BuildContext context, StateSetter setState) {
           return TestUtils.createTestApp(
             paths: paths,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('file:///folder1'),
+              Uri.parse('file:///folder2'),
+              Uri.parse('file:///folder2/subfolder'),
+            },
             onReorder: (Uri oldPath, Uri newPath) {
               setState(() {
                 paths.remove(oldPath);
@@ -162,6 +204,12 @@ void main() {
       // Switch to loaded state
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
+        initiallyExpanded: <Uri>{
+          Uri.parse('file:///'),
+          Uri.parse('file:///folder1'),
+          Uri.parse('file:///folder2'),
+          Uri.parse('file:///folder2/subfolder'),
+        },
       ));
 
       // Verify tree is announced
@@ -176,6 +224,12 @@ void main() {
         ),
         child: TestUtils.createTestApp(
           paths: TestUtils.sampleFilePaths,
+          initiallyExpanded: <Uri>{
+            Uri.parse('file:///'),
+            Uri.parse('file:///folder1'),
+            Uri.parse('file:///folder2'),
+            Uri.parse('file:///folder2/subfolder'),
+          },
           theme: const TreeTheme(),
         ),
       ));

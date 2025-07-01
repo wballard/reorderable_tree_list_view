@@ -12,6 +12,12 @@ void main() {
         home: Scaffold(
           body: ReorderableTreeListView(
             paths: TestUtils.sampleFilePaths,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('file:///folder1'),
+              Uri.parse('file:///folder2'),
+              Uri.parse('file:///folder2/subfolder'),
+            },
             itemBuilder: (BuildContext context, Uri path) => Row(
               children: [
                 const Icon(Icons.insert_drive_file, size: 20),
@@ -45,6 +51,12 @@ void main() {
         home: Scaffold(
           body: ReorderableTreeListView(
             paths: TestUtils.sampleFilePaths,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('file:///folder1'),
+              Uri.parse('file:///folder2'),
+              Uri.parse('file:///folder2/subfolder'),
+            },
             theme: const TreeTheme(),
             itemBuilder: (BuildContext context, Uri path) => Row(
               children: [
@@ -79,6 +91,12 @@ void main() {
         home: Scaffold(
           body: ReorderableTreeListView(
             paths: TestUtils.sampleFilePaths,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('file:///folder1'),
+              Uri.parse('file:///folder2'),
+              Uri.parse('file:///folder2/subfolder'),
+            },
             theme: TreeTheme(
               hoverColor: Colors.white.withValues(alpha: 0.1),
               focusColor: Colors.white.withValues(alpha: 0.2),
@@ -121,6 +139,12 @@ void main() {
         home: Scaffold(
           body: ReorderableTreeListView(
             paths: TestUtils.sampleFilePaths,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('file:///folder1'),
+              Uri.parse('file:///folder2'),
+              Uri.parse('file:///folder2/subfolder'),
+            },
             selectionMode: SelectionMode.multiple,
             initialSelection: selectedPaths,
             itemBuilder: (BuildContext context, Uri path) {
@@ -163,6 +187,12 @@ void main() {
         home: Scaffold(
           body: ReorderableTreeListView(
             paths: TestUtils.sampleFilePaths,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('file:///folder1'),
+              Uri.parse('file:///folder2'),
+              Uri.parse('file:///folder2/subfolder'),
+            },
             onReorder: (Uri oldPath, Uri newPath) {},
             proxyDecorator: (Widget child, int index, Animation<double> animation) {
               return AnimatedBuilder(
@@ -220,6 +250,15 @@ void main() {
         home: Scaffold(
           body: ReorderableTreeListView(
             paths: MockData.deepHierarchy,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('file:///l1'),
+              Uri.parse('file:///l1/l2'),
+              Uri.parse('file:///l1/l2/l3'),
+              Uri.parse('file:///l1/l2/l3/l4'),
+              Uri.parse('file:///l1/l2/l3/l4/l5'),
+              Uri.parse('file:///l1/l2/l3/l4/l5/l6'),
+            },
             theme: const TreeTheme(
               indentSize: 48,
             ),
@@ -259,6 +298,12 @@ void main() {
         home: Scaffold(
           body: ReorderableTreeListView(
             paths: TestUtils.sampleFilePaths,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('file:///folder1'),
+              Uri.parse('file:///folder2'),
+              Uri.parse('file:///folder2/subfolder'),
+            },
             theme: const TreeTheme(
               itemPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               indentSize: 20,
@@ -299,6 +344,18 @@ void main() {
         home: Scaffold(
           body: ReorderableTreeListView(
             paths: MockData.mixedSchemes,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('https://'),
+              Uri.parse('https://example.com'),
+              Uri.parse('https://example.com/api'),
+              Uri.parse('ftp://'),
+              Uri.parse('ftp://server.com'),
+              Uri.parse('ftp://server.com/upload'),
+              Uri.parse('custom://'),
+              Uri.parse('custom://app'),
+              Uri.parse('custom://app/settings'),
+            },
             itemBuilder: (BuildContext context, Uri path) {
               final String scheme = path.scheme;
               IconData icon;

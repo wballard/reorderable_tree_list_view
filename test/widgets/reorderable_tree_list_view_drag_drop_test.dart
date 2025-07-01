@@ -26,6 +26,7 @@ void main() {
       bool Function(Uri draggedPath, Uri targetPath)? onWillAcceptDrop,
       Widget Function(Widget child, int index, Animation<double> animation)?
       proxyDecorator,
+      Set<Uri>? initiallyExpanded,
     }) => MaterialApp(
       home: Scaffold(
         body: ReorderableTreeListView(
@@ -37,6 +38,7 @@ void main() {
           onDragEnd: onDragEnd,
           onWillAcceptDrop: onWillAcceptDrop,
           proxyDecorator: proxyDecorator,
+          initiallyExpanded: initiallyExpanded,
         ),
       ),
     );
@@ -50,6 +52,12 @@ void main() {
       await tester.pumpWidget(
         buildTestWidget(
           paths: testPaths,
+          initiallyExpanded: <Uri>{
+            Uri.parse('file://'),
+            Uri.parse('file://folder1'),
+            Uri.parse('file://folder2'),
+            Uri.parse('file://folder3'),
+          },
           onReorder: (Uri oldPath, Uri newPath) {
             reorderedOldPath = oldPath;
             reorderedNewPath = newPath;
@@ -91,6 +99,12 @@ void main() {
       await tester.pumpWidget(
         buildTestWidget(
           paths: testPaths,
+          initiallyExpanded: <Uri>{
+            Uri.parse('file://'),
+            Uri.parse('file://folder1'),
+            Uri.parse('file://folder2'),
+            Uri.parse('file://folder3'),
+          },
           onDragStart: (Uri path) {
             dragStartPath = path;
           },
@@ -121,6 +135,12 @@ void main() {
       await tester.pumpWidget(
         buildTestWidget(
           paths: testPaths,
+          initiallyExpanded: <Uri>{
+            Uri.parse('file://'),
+            Uri.parse('file://folder1'),
+            Uri.parse('file://folder2'),
+            Uri.parse('file://folder3'),
+          },
           onDragEnd: (Uri path) {
             dragEndPath = path;
           },
@@ -150,6 +170,12 @@ void main() {
       await tester.pumpWidget(
         buildTestWidget(
           paths: testPaths,
+          initiallyExpanded: <Uri>{
+            Uri.parse('file://'),
+            Uri.parse('file://folder1'),
+            Uri.parse('file://folder2'),
+            Uri.parse('file://folder3'),
+          },
           onReorder: (Uri oldPath, Uri newPath) {
             reorderCalled = true;
           },
@@ -192,6 +218,12 @@ void main() {
       await tester.pumpWidget(
         buildTestWidget(
           paths: testPaths,
+          initiallyExpanded: <Uri>{
+            Uri.parse('file://'),
+            Uri.parse('file://folder1'),
+            Uri.parse('file://folder2'),
+            Uri.parse('file://folder3'),
+          },
           proxyDecorator:
               (Widget child, int index, Animation<double> animation) {
                 decoratorApplied = true;
@@ -253,6 +285,17 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: complexPaths,
+              initiallyExpanded: <Uri>{
+                Uri.parse('file://'),
+                Uri.parse('file://projectA'),
+                Uri.parse('file://projectA/src'),
+                Uri.parse('file://projectA/src/utils'),
+                Uri.parse('file://projectA/tests'),
+                Uri.parse('file://projectB'),
+                Uri.parse('file://projectB/lib'),
+                Uri.parse('file://projectB/lib/widgets'),
+                Uri.parse('file://shared'),
+              },
               itemBuilder: (BuildContext context, Uri path) =>
                   Text(path.toString()),
               onReorder: (Uri oldPath, Uri newPath) {

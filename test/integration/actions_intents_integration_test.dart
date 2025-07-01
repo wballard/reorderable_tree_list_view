@@ -12,6 +12,12 @@ void main() {
         home: Scaffold(
           body: ReorderableTreeListView(
             paths: TestUtils.sampleFilePaths,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('file:///folder1'),
+              Uri.parse('file:///folder2'),
+              Uri.parse('file:///folder2/subfolder'),
+            },
             itemBuilder: (context, path) => Text(TreePath.getDisplayName(path)),
           ),
         ),
@@ -53,6 +59,12 @@ void main() {
           child: Scaffold(
             body: ReorderableTreeListView(
               paths: TestUtils.sampleFilePaths,
+              initiallyExpanded: <Uri>{
+                Uri.parse('file:///'),
+                Uri.parse('file:///folder1'),
+                Uri.parse('file:///folder2'),
+                Uri.parse('file:///folder2/subfolder'),
+              },
               itemBuilder: (context, path) => Text(TreePath.getDisplayName(path)),
             ),
           ),
@@ -92,6 +104,12 @@ void main() {
               },
               child: ReorderableTreeListView(
                 paths: TestUtils.sampleFilePaths,
+                initiallyExpanded: <Uri>{
+                  Uri.parse('file:///'),
+                  Uri.parse('file:///folder1'),
+                  Uri.parse('file:///folder2'),
+                  Uri.parse('file:///folder2/subfolder'),
+                },
                 selectionMode: SelectionMode.single,
                 itemBuilder: (context, path) => Text(TreePath.getDisplayName(path)),
               ),
@@ -136,6 +154,12 @@ void main() {
             child: Scaffold(
               body: ReorderableTreeListView(
                 paths: TestUtils.sampleFilePaths,
+                initiallyExpanded: <Uri>{
+                  Uri.parse('file:///'),
+                  Uri.parse('file:///folder1'),
+                  Uri.parse('file:///folder2'),
+                  Uri.parse('file:///folder2/subfolder'),
+                },
                 enableKeyboardNavigation: true,
                 selectionMode: SelectionMode.single,
                 itemBuilder: (context, path) => Text(TreePath.getDisplayName(path)),
@@ -175,6 +199,12 @@ void main() {
           child: Scaffold(
             body: ReorderableTreeListView(
               paths: TestUtils.sampleFilePaths,
+              initiallyExpanded: <Uri>{
+                Uri.parse('file:///'),
+                Uri.parse('file:///folder1'),
+                Uri.parse('file:///folder2'),
+                Uri.parse('file:///folder2/subfolder'),
+              },
               selectionMode: SelectionMode.single,
               onItemActivated: (path) {
                 // This should trigger the intent
@@ -226,6 +256,12 @@ void main() {
           child: Scaffold(
             body: ReorderableTreeListView(
               paths: TestUtils.sampleFilePaths,
+              initiallyExpanded: <Uri>{
+                Uri.parse('file:///'),
+                Uri.parse('file:///folder1'),
+                Uri.parse('file:///folder2'),
+                Uri.parse('file:///folder2/subfolder'),
+              },
               selectionMode: SelectionMode.single,
               itemBuilder: (context, path) => Text(TreePath.getDisplayName(path)),
             ),
@@ -245,6 +281,12 @@ void main() {
         home: Scaffold(
           body: ReorderableTreeListView(
             paths: TestUtils.sampleFilePaths,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('file:///folder1'),
+              Uri.parse('file:///folder2'),
+              Uri.parse('file:///folder2/subfolder'),
+            },
             itemBuilder: (BuildContext context, Uri path) => Text(TreePath.getDisplayName(path)),
           ),
         ),

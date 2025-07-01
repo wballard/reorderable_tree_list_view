@@ -15,6 +15,11 @@ void main() {
         builder: (BuildContext context, StateSetter setState) {
           return TestUtils.createTestApp(
             paths: paths,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('file:///folder1'),
+              Uri.parse('file:///folder2'),
+            },
             onReorder: (Uri oldPath, Uri newPath) {
               setState(() {
                 paths.remove(oldPath);
@@ -184,6 +189,9 @@ void main() {
         builder: (BuildContext context, StateSetter setState) {
           return TestUtils.createTestApp(
             paths: paths,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+            },
             onReorder: (Uri oldPath, Uri newPath) {
               setState(() {
                 paths.remove(oldPath);
@@ -239,6 +247,11 @@ void main() {
         builder: (BuildContext context, StateSetter setState) {
           return TestUtils.createTestApp(
             paths: paths,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('file:///folder1'),
+              Uri.parse('file:///folder1/subfolder'),
+            },
             onReorder: (Uri oldPath, Uri newPath) {
               setState(() {
                 paths.remove(oldPath);
@@ -310,6 +323,12 @@ void main() {
         builder: (BuildContext context, StateSetter setState) {
           return TestUtils.createTestApp(
             paths: paths,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('file:///level1'),
+              Uri.parse('file:///level1/level2'),
+              Uri.parse('file:///level1/level2/level3'),
+            },
             onReorder: (Uri oldPath, Uri newPath) {
               setState(() {
                 paths.remove(oldPath);

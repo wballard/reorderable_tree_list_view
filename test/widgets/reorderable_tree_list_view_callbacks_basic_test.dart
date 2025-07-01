@@ -17,6 +17,7 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: paths,
+              initiallyExpanded: <Uri>{Uri.parse('file:///')},
               itemBuilder: (BuildContext context, Uri path) => Text(path.toString()),
               onItemTap: tappedPaths.add,
             ),
@@ -44,6 +45,7 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: paths,
+              initiallyExpanded: <Uri>{Uri.parse('file:///')},
               itemBuilder: (BuildContext context, Uri path) => Text(path.toString()),
               selectionMode: SelectionMode.single,
               onSelectionChanged: selectionChanges.add,
@@ -73,6 +75,7 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: paths,
+              initiallyExpanded: <Uri>{Uri.parse('file:///')},
               itemBuilder: (BuildContext context, Uri path) => SizedBox(
                     key: ValueKey<String>(path.toString()),
                     height: 60,

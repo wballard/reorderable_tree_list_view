@@ -45,6 +45,7 @@ class TestUtils {
     void Function(Uri)? onItemActivated,
     Set<Uri>? initialSelection,
     void Function(Uri)? onExpandStart,
+    Set<Uri>? initiallyExpanded,
   }) {
     return MaterialApp(
       home: Scaffold(
@@ -68,6 +69,7 @@ class TestUtils {
           onItemActivated: onItemActivated,
           initialSelection: initialSelection,
           onExpandStart: onExpandStart,
+          initiallyExpanded: initiallyExpanded,
         ),
       ),
     );

@@ -16,7 +16,7 @@ void main() {
     });
 
     group('initialization', () {
-      testWidgets('should expand all folders by default', (
+      testWidgets('should collapse all folders by default', (
         WidgetTester tester,
       ) async {
         await tester.pumpWidget(
@@ -34,25 +34,29 @@ void main() {
           ),
         );
 
-        // Should show all nodes when expanded by default
+        // Should show only root node when collapsed by default
         expect(find.text('file:///'), findsOneWidget);
-        expect(find.text('file://root/'), findsOneWidget);
-        expect(find.text('folder1'), findsOneWidget);
-        expect(find.text('folder2'), findsOneWidget);
-        expect(find.text('file1.txt'), findsOneWidget);
-        expect(find.text('file2.txt'), findsOneWidget);
-        expect(find.text('file3.txt'), findsOneWidget);
-        expect(find.text('file4.txt'), findsOneWidget);
+        expect(find.text('file://root/'), findsNothing);
+        expect(find.text('folder1'), findsNothing);
+        expect(find.text('folder2'), findsNothing);
+        expect(find.text('file1.txt'), findsNothing);
+        expect(find.text('file2.txt'), findsNothing);
+        expect(find.text('file3.txt'), findsNothing);
+        expect(find.text('file4.txt'), findsNothing);
       });
 
       testWidgets(
-        'should collapse all folders when expandedByDefault is false',
+        'should expand specified folders with initiallyExpanded',
         (WidgetTester tester) async {
           await tester.pumpWidget(
             MaterialApp(
               home: Scaffold(
                 body: ReorderableTreeListView(
                   paths: testPaths,
+                  initiallyExpanded: <Uri>{
+                    Uri.parse('file://'),
+                    Uri.parse('file://root'),
+                  },
                   itemBuilder: (BuildContext context, Uri path) => Text(
                     path.pathSegments.isNotEmpty
                         ? path.pathSegments.last
@@ -63,11 +67,17 @@ void main() {
             ),
           );
 
-          // Should show only root node when collapsed by default
+          // Should show root and its immediate children when specifically expanded
           expect(find.text('file:///'), findsOneWidget);
-          expect(find.text('file://root/'), findsNothing);
-          expect(find.text('folder1'), findsNothing);
+          expect(find.text('file://root/'), findsOneWidget);
+          expect(find.text('folder1'), findsOneWidget);
+          expect(find.text('folder2'), findsOneWidget);
+          expect(find.text('file4.txt'), findsOneWidget);
+
+          // But not the contents of folders that weren't expanded
           expect(find.text('file1.txt'), findsNothing);
+          expect(find.text('file2.txt'), findsNothing);
+          expect(find.text('file3.txt'), findsNothing);
         },
       );
 
@@ -116,6 +126,11 @@ void main() {
             home: Scaffold(
               body: ReorderableTreeListView(
                 paths: testPaths,
+                initiallyExpanded: <Uri>{
+                  Uri.parse('file://'),
+                  Uri.parse('file://root'),
+                  Uri.parse('file://root/folder1'),
+                },
                 itemBuilder: (BuildContext context, Uri path) => Text(
                   path.pathSegments.isNotEmpty
                       ? path.pathSegments.last
@@ -126,7 +141,7 @@ void main() {
           ),
         );
 
-        // Verify folder1 contents are initially visible
+        // Verify folder1 contents are initially visible due to initiallyExpanded
         expect(find.text('file1.txt'), findsOneWidget);
         expect(find.text('file2.txt'), findsOneWidget);
 

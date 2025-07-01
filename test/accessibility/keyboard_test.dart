@@ -13,6 +13,12 @@ void main() {
         home: Scaffold(
           body: ReorderableTreeListView(
             paths: TestUtils.sampleFilePaths,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('file:///folder1'),
+              Uri.parse('file:///folder2'),
+              Uri.parse('file:///folder2/subfolder'),
+            },
             selectionMode: SelectionMode.single,
             itemBuilder: (context, path) => Text(TreePath.getDisplayName(path)),
           ),
@@ -71,6 +77,12 @@ void main() {
     testWidgets('should expand/collapse with Enter key', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
+        initiallyExpanded: <Uri>{
+          Uri.parse('file:///'),
+          Uri.parse('file:///folder1'),
+          Uri.parse('file:///folder2'),
+          Uri.parse('file:///folder2/subfolder'),
+        },
       ));
 
       // Focus on a folder
@@ -87,6 +99,12 @@ void main() {
     testWidgets('should select with Space key', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
+        initiallyExpanded: <Uri>{
+          Uri.parse('file:///'),
+          Uri.parse('file:///folder1'),
+          Uri.parse('file:///folder2'),
+          Uri.parse('file:///folder2/subfolder'),
+        },
         selectionMode: SelectionMode.multiple,
         onSelectionChanged: (Set<Uri> selection) {}, // Verifying selection with Space key
       ));
@@ -107,6 +125,12 @@ void main() {
     testWidgets('should handle focus indicators', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
+        initiallyExpanded: <Uri>{
+          Uri.parse('file:///'),
+          Uri.parse('file:///folder1'),
+          Uri.parse('file:///folder2'),
+          Uri.parse('file:///folder2/subfolder'),
+        },
         theme: const TreeTheme(
           focusColor: Colors.blue,
         ),
@@ -143,6 +167,12 @@ void main() {
             child: Scaffold(
               body: ReorderableTreeListView(
                 paths: TestUtils.sampleFilePaths,
+                initiallyExpanded: <Uri>{
+                  Uri.parse('file:///'),
+                  Uri.parse('file:///folder1'),
+                  Uri.parse('file:///folder2'),
+                  Uri.parse('file:///folder2/subfolder'),
+                },
                 itemBuilder: (BuildContext context, Uri path) => Text(TreePath.getDisplayName(path)),
               ),
             ),
@@ -168,6 +198,12 @@ void main() {
     testWidgets('should announce focus changes for screen readers', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
+        initiallyExpanded: <Uri>{
+          Uri.parse('file:///'),
+          Uri.parse('file:///folder1'),
+          Uri.parse('file:///folder2'),
+          Uri.parse('file:///folder2/subfolder'),
+        },
       ));
 
       // Check semantics
@@ -188,6 +224,12 @@ void main() {
     testWidgets('should provide keyboard navigation help', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
+        initiallyExpanded: <Uri>{
+          Uri.parse('file:///'),
+          Uri.parse('file:///folder1'),
+          Uri.parse('file:///folder2'),
+          Uri.parse('file:///folder2/subfolder'),
+        },
       ));
 
       // The tree should have semantic hints for keyboard navigation

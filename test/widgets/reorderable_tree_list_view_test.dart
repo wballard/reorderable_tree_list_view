@@ -23,6 +23,13 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: samplePaths,
+              initiallyExpanded: <Uri>{
+                Uri.parse('file://'),
+                Uri.parse('file://var'),
+                Uri.parse('file://var/data'),
+                Uri.parse('file://usr'),
+                Uri.parse('file://usr/bin'),
+              },
               itemBuilder: (BuildContext context, Uri path) =>
                   ListTile(title: Text(path.toString())),
             ),
@@ -49,6 +56,13 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: samplePaths,
+              initiallyExpanded: <Uri>{
+                Uri.parse('file://'),
+                Uri.parse('file://var'),
+                Uri.parse('file://var/data'),
+                Uri.parse('file://usr'),
+                Uri.parse('file://usr/bin'),
+              },
               itemBuilder: (BuildContext context, Uri path) => ListTile(
                 key: ValueKey<String>(path.toString()),
                 title: Text(path.toString()),
@@ -71,6 +85,13 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: samplePaths,
+              initiallyExpanded: <Uri>{
+                Uri.parse('file://'),
+                Uri.parse('file://var'),
+                Uri.parse('file://var/data'),
+                Uri.parse('file://usr'),
+                Uri.parse('file://usr/bin'),
+              },
               itemBuilder: (BuildContext context, Uri path) =>
                   ListTile(title: Text('Leaf: $path')),
               folderBuilder: (BuildContext context, Uri path) =>
@@ -91,6 +112,13 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: const <Uri>[],
+              initiallyExpanded: <Uri>{
+                Uri.parse('file://'),
+                Uri.parse('file://var'),
+                Uri.parse('file://var/data'),
+                Uri.parse('file://usr'),
+                Uri.parse('file://usr/bin'),
+              },
               itemBuilder: (BuildContext context, Uri path) =>
                   ListTile(title: Text(path.toString())),
             ),
@@ -114,6 +142,13 @@ void main() {
                   Expanded(
                     child: ReorderableTreeListView(
                       paths: paths,
+                      initiallyExpanded: <Uri>{
+                Uri.parse('file://'),
+                Uri.parse('file://var'),
+                Uri.parse('file://var/data'),
+                Uri.parse('file://usr'),
+                Uri.parse('file://usr/bin'),
+              },
                       itemBuilder: (BuildContext context, Uri path) =>
                           ListTile(title: Text(path.toString())),
                     ),
@@ -156,6 +191,13 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: samplePaths,
+              initiallyExpanded: <Uri>{
+                Uri.parse('file://'),
+                Uri.parse('file://var'),
+                Uri.parse('file://var/data'),
+                Uri.parse('file://usr'),
+                Uri.parse('file://usr/bin'),
+              },
               scrollController: scrollController,
               itemBuilder: (BuildContext context, Uri path) =>
                   ListTile(title: Text(path.toString())),
@@ -178,6 +220,13 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: samplePaths,
+              initiallyExpanded: <Uri>{
+                Uri.parse('file://'),
+                Uri.parse('file://var'),
+                Uri.parse('file://var/data'),
+                Uri.parse('file://usr'),
+                Uri.parse('file://usr/bin'),
+              },
               padding: padding,
               itemBuilder: (BuildContext context, Uri path) =>
                   ListTile(title: Text(path.toString())),

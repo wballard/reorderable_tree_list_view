@@ -12,6 +12,12 @@ void main() {
         paths: TestUtils.sampleFilePaths,
         selectionMode: SelectionMode.single,
         enableKeyboardNavigation: true,
+        initiallyExpanded: <Uri>{
+          Uri.parse('file:///'),
+          Uri.parse('file:///folder1'),
+          Uri.parse('file:///folder2'),
+          Uri.parse('file:///folder2/subfolder'),
+        },
         onSelectionChanged: (Set<Uri> selection) {}, // Verify selection with keyboard
         onItemActivated: (Uri path) {}, // Verify activation with Enter
       ));
@@ -41,6 +47,12 @@ void main() {
         paths: TestUtils.sampleFilePaths,
         selectionMode: SelectionMode.multiple,
         enableKeyboardNavigation: true,
+        initiallyExpanded: <Uri>{
+          Uri.parse('file:///'),
+          Uri.parse('file:///folder1'),
+          Uri.parse('file:///folder2'),
+          Uri.parse('file:///folder2/subfolder'),
+        },
         onSelectionChanged: (Set<Uri> selection) {}, // Verify multi-selection
       ));
 
@@ -59,6 +71,12 @@ void main() {
           body: ReorderableTreeListView(
             paths: TestUtils.sampleFilePaths,
             enableKeyboardNavigation: true,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('file:///folder1'),
+              Uri.parse('file:///folder2'),
+              Uri.parse('file:///folder2/subfolder'),
+            },
             itemBuilder: (context, path) => Text(TreePath.getDisplayName(path)),
           ),
         ),
@@ -86,6 +104,10 @@ void main() {
           body: ReorderableTreeListView(
             paths: filteredPaths,
             enableKeyboardNavigation: true,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('file:///folder1'),
+            },
             itemBuilder: (context, path) => Text(TreePath.getDisplayName(path)),
           ),
         ),
@@ -115,6 +137,12 @@ void main() {
             paths: paths,
             selectionMode: SelectionMode.single,
             enableKeyboardNavigation: true,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('file:///folder1'),
+              Uri.parse('file:///folder2'),
+              Uri.parse('file:///folder2/subfolder'),
+            },
             onSelectionChanged: (selection) {
               selectedPath = selection.isEmpty ? null : selection.first;
             },
@@ -191,6 +219,12 @@ void main() {
             child: Scaffold(
               body: ReorderableTreeListView(
                 paths: TestUtils.sampleFilePaths,
+                initiallyExpanded: <Uri>{
+                  Uri.parse('file:///'),
+                  Uri.parse('file:///folder1'),
+                  Uri.parse('file:///folder2'),
+                  Uri.parse('file:///folder2/subfolder'),
+                },
                 enableKeyboardNavigation: true,
                 selectionMode: SelectionMode.single,
                 onSelectionChanged: (Set<Uri> selection) {

@@ -22,6 +22,7 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: paths,
+              initiallyExpanded: <Uri>{Uri.parse('file:///')},
               itemBuilder: (BuildContext context, Uri path) => Text(path.toString()),
               onExpandStart: expandStartPaths.add,
               onExpandEnd: expandEndPaths.add,
@@ -81,6 +82,7 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: paths,
+              initiallyExpanded: <Uri>{Uri.parse('file:///')},
               itemBuilder: (BuildContext context, Uri path) => SizedBox(
                     key: ValueKey<String>(path.toString()),
                     height: 60,
@@ -136,6 +138,7 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: paths,
+              initiallyExpanded: <Uri>{Uri.parse('file:///')},
               itemBuilder: (BuildContext context, Uri path) => Text(path.toString()),
               selectionMode: SelectionMode.single,
               onSelectionChanged: selectionChanges.add,
@@ -178,6 +181,7 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: paths,
+              initiallyExpanded: <Uri>{Uri.parse('file:///')},
               itemBuilder: (BuildContext context, Uri path) => Text(path.toString()),
               canExpand: (Uri path) => allowExpansion,
               onExpandEnd: expandedPaths.add,
@@ -228,6 +232,7 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: paths,
+              initiallyExpanded: <Uri>{Uri.parse('file:///')},
               itemBuilder: (BuildContext context, Uri path) => Text(path.toString()),
               onContextMenu: (Uri path, Offset position) => 
                   contextMenuEvents.add((path, position)),
@@ -259,6 +264,7 @@ void main() {
           home: Scaffold(
             body: ReorderableTreeListView(
               paths: paths,
+              initiallyExpanded: <Uri>{Uri.parse('file:///')},
               itemBuilder: (BuildContext context, Uri path) => Text(path.toString()),
               canExpandAsync: (Uri path) async {
                 await Future<void>.delayed(const Duration(milliseconds: 100));

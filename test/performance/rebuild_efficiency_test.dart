@@ -14,6 +14,12 @@ void main() {
         builder: (context, setState) {
           return TestUtils.createTestApp(
             paths: TestUtils.sampleFilePaths,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('file:///folder1'),
+              Uri.parse('file:///folder2'),
+              Uri.parse('file:///folder2/subfolder'),
+            },
             itemBuilder: (context, path) {
               final name = TreePath.getDisplayName(path);
               itemBuildCounts[name] = (itemBuildCounts[name] ?? 0) + 1;
@@ -48,6 +54,9 @@ void main() {
 
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: paths,
+        initiallyExpanded: <Uri>{
+          Uri.parse('file:///'),
+        },
         itemBuilder: (context, path) {
           buildCount++;
           return Text(TreePath.getDisplayName(path));
@@ -78,6 +87,12 @@ void main() {
         builder: (context, setState) {
           return TestUtils.createTestApp(
             paths: TestUtils.sampleFilePaths,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('file:///folder1'),
+              Uri.parse('file:///folder2'),
+              Uri.parse('file:///folder2/subfolder'),
+            },
             selectionMode: SelectionMode.multiple,
             initialSelection: selectedPaths,
             onSelectionChanged: (selection) {
@@ -122,6 +137,12 @@ void main() {
 
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
+        initiallyExpanded: <Uri>{
+          Uri.parse('file:///'),
+          Uri.parse('file:///folder1'),
+          Uri.parse('file:///folder2'),
+          Uri.parse('file:///folder2/subfolder'),
+        },
         itemBuilder: (context, path) {
           final result = expensiveComputation(path);
           return Text(result);
@@ -151,6 +172,12 @@ void main() {
         builder: (context, setState) {
           return TestUtils.createTestApp(
             paths: TestUtils.sampleFilePaths,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('file:///folder1'),
+              Uri.parse('file:///folder2'),
+              Uri.parse('file:///folder2/subfolder'),
+            },
             theme: theme,
             itemBuilder: (context, path) {
               buildCount++;
@@ -167,6 +194,12 @@ void main() {
         builder: (context, setState) {
           return TestUtils.createTestApp(
             paths: TestUtils.sampleFilePaths,
+            initiallyExpanded: <Uri>{
+              Uri.parse('file:///'),
+              Uri.parse('file:///folder1'),
+              Uri.parse('file:///folder2'),
+              Uri.parse('file:///folder2/subfolder'),
+            },
             theme: const TreeTheme(indentSize: 40),
             itemBuilder: (context, path) {
               buildCount++;
@@ -186,6 +219,12 @@ void main() {
 
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
+        initiallyExpanded: <Uri>{
+          Uri.parse('file:///'),
+          Uri.parse('file:///folder1'),
+          Uri.parse('file:///folder2'),
+          Uri.parse('file:///folder2/subfolder'),
+        },
         itemBuilder: (context, path) {
           return _DisposableItem(
             path: path,
@@ -229,6 +268,12 @@ void main() {
                   Expanded(
                     child: ReorderableTreeListView(
                       paths: paths,
+                      initiallyExpanded: <Uri>{
+                        Uri.parse('file:///'),
+                        Uri.parse('file:///folder1'),
+                        Uri.parse('file:///folder2'),
+                        Uri.parse('file:///folder2/subfolder'),
+                      },
                       itemBuilder: (context, path) {
                         buildCount++;
                     return Text(TreePath.getDisplayName(path));
