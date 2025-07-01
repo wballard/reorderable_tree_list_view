@@ -251,8 +251,10 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
   void didUpdateWidget(ReorderableTreeListView oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // Check if paths have changed
-    if (_pathsChanged(oldWidget.paths, widget.paths)) {
+    // Check if paths or expansion settings have changed
+    if (_pathsChanged(oldWidget.paths, widget.paths) ||
+        oldWidget.expandedByDefault != widget.expandedByDefault ||
+        oldWidget.initiallyExpanded != widget.initiallyExpanded) {
       _buildTreeState();
       _keyboardController.treeState = _treeState;
     }
