@@ -528,6 +528,7 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
           node: node,
           hasChildren: hasChildren,
           isExpanded: isExpanded,
+          animateExpansion: widget.animateExpansion,
           onExpansionToggle: hasChildren
               ? () => _toggleExpansion(node.path)
               : null,

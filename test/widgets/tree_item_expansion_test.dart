@@ -35,6 +35,7 @@ void main() {
                 node: folderNode,
                 isExpanded: treeState.isExpanded(folderPath),
                 hasChildren: treeState.getChildren(folderPath).isNotEmpty,
+                animateExpansion: false,
                 onExpansionToggle: () {},
                 child: Text(folderNode.displayName),
               ),
@@ -62,6 +63,7 @@ void main() {
                 node: folderNode,
                 isExpanded: treeState.isExpanded(folderPath),
                 hasChildren: treeState.getChildren(folderPath).isNotEmpty,
+                animateExpansion: false,
                 onExpansionToggle: () {},
                 child: Text(folderNode.displayName),
               ),
@@ -87,6 +89,7 @@ void main() {
               body: ReorderableTreeListViewItem(
                 key: ValueKey<String>(leafNode.key),
                 node: leafNode,
+                animateExpansion: false,
                 onExpansionToggle: () {},
                 child: Text(leafNode.displayName),
               ),
@@ -116,6 +119,7 @@ void main() {
                   node: folderNode,
                   isExpanded: treeState.isExpanded(folderPath),
                   hasChildren: treeState.getChildren(folderPath).isNotEmpty,
+                  animateExpansion: false,
                   onExpansionToggle: () {
                     toggleCalled = true;
                   },
@@ -147,6 +151,7 @@ void main() {
                 node: folderNode,
                 isExpanded: treeState.isExpanded(folderPath),
                 hasChildren: treeState.getChildren(folderPath).isNotEmpty,
+                animateExpansion: false,
                 onExpansionToggle: () {},
                 child: Text(folderNode.displayName),
               ),
@@ -179,6 +184,7 @@ void main() {
                 node: folderNode,
                 isExpanded: treeState.isExpanded(folderPath),
                 hasChildren: treeState.getChildren(folderPath).isNotEmpty,
+                animateExpansion: false,
                 onExpansionToggle: () {},
                 child: Text(folderNode.displayName),
               ),

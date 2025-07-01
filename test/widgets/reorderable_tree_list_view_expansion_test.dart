@@ -126,6 +126,7 @@ void main() {
             home: Scaffold(
               body: ReorderableTreeListView(
                 paths: testPaths,
+                animateExpansion: false, // Disable animation for icon-based tests
                 initiallyExpanded: <Uri>{
                   Uri.parse('file://'),
                   Uri.parse('file://root'),
@@ -152,6 +153,7 @@ void main() {
           matching: find.byType(ReorderableTreeListViewItem),
         );
 
+        // Verify folder1 is expanded (down arrow)
         final Finder arrowIconFinder = find.descendant(
           of: folder1Finder,
           matching: find.byIcon(Icons.keyboard_arrow_down),

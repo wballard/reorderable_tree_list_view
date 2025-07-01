@@ -31,6 +31,7 @@ class ReorderableTreeListViewItem extends StatelessWidget {
     this.isFocused = false,
     this.isSelected = false,
     this.onContextMenu,
+    this.animateExpansion = true,
   });
 
   /// The tree node data that determines depth and other properties.
@@ -75,6 +76,9 @@ class ReorderableTreeListViewItem extends StatelessWidget {
 
   /// Callback for when context menu is requested (right-click).
   final void Function(Offset globalPosition)? onContextMenu;
+
+  /// Whether to animate the expansion/collapse of folders.
+  final bool animateExpansion;
 
   /// Handles expansion toggle using Actions.maybeInvoke pattern.
   void _handleExpansionToggle(BuildContext context) {
@@ -156,12 +160,21 @@ class ReorderableTreeListViewItem extends StatelessWidget {
             height: 24,
             child: IconButton(
               onPressed: () => _handleExpansionToggle(context),
-              icon: Icon(
-                isExpanded
-                    ? Icons.keyboard_arrow_down
-                    : Icons.keyboard_arrow_right,
-                size: 18,
-              ),
+              icon: animateExpansion
+                  ? AnimatedRotation(
+                      turns: isExpanded ? 0.25 : 0.0,
+                      duration: const Duration(milliseconds: 200),
+                      child: const Icon(
+                        Icons.keyboard_arrow_right,
+                        size: 18,
+                      ),
+                    )
+                  : Icon(
+                      isExpanded
+                          ? Icons.keyboard_arrow_down
+                          : Icons.keyboard_arrow_right,
+                      size: 18,
+                    ),
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
               style: IconButton.styleFrom(

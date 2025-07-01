@@ -32,6 +32,7 @@ void main() {
                   key: const ValueKey<String>('test'),
                   node: testNode,
                   hasChildren: true,
+                  animateExpansion: false,
                   onExpansionToggle: () {
                     // This should NOT be called when using Actions.maybeInvoke
                     fail(
@@ -81,6 +82,7 @@ void main() {
                     hasChildren: true,
                     isExpanded:
                         true, // Expanded, so should show collapse button
+                    animateExpansion: false,
                     onExpansionToggle: () {
                       fail(
                         'onExpansionToggle should not be called when Actions.maybeInvoke is used',
@@ -128,6 +130,7 @@ void main() {
                   key: const ValueKey<String>('test'),
                   node: testNode,
                   hasChildren: true,
+                  animateExpansion: false,
                   child: const Text('Test Folder'),
                 ),
               ),
@@ -160,6 +163,7 @@ void main() {
                   key: const ValueKey<String>('test'),
                   node: testNode,
                   hasChildren: true,
+                  animateExpansion: false,
                   onExpansionToggle: () {
                     callbackCalled = true;
                   },
@@ -208,6 +212,7 @@ void main() {
                     key: const ValueKey<String>('test'),
                     node: testNode,
                     hasChildren: true,
+                    animateExpansion: false,
                     onExpansionToggle: () {
                       callbackCalled = true;
                     },

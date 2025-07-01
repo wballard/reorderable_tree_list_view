@@ -26,6 +26,7 @@ void main() {
             home: Scaffold(
               body: ReorderableTreeListView(
                 paths: testPaths,
+                animateExpansion: false,
                 itemBuilder: (BuildContext context, Uri path) =>
                     Text(path.toString()),
               ),
@@ -75,6 +76,7 @@ void main() {
                 },
                 child: ReorderableTreeListView(
                   paths: testPaths,
+                  animateExpansion: false,
                   itemBuilder: (BuildContext context, Uri path) =>
                       Text(path.toString()),
                 ),
@@ -124,6 +126,7 @@ void main() {
                       Expanded(
                         child: ReorderableTreeListView(
                           paths: testPaths,
+                          animateExpansion: false,
                           itemBuilder: (BuildContext context, Uri path) =>
                               Text(path.toString()),
                         ),
@@ -155,6 +158,7 @@ void main() {
             home: Scaffold(
               body: ReorderableTreeListView(
                 paths: testPaths,
+                animateExpansion: false,
                 itemBuilder: (BuildContext context, Uri path) =>
                     Text(path.toString()),
               ),
