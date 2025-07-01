@@ -39,17 +39,25 @@ class TreeBuilder {
     // Create a map to store all unique paths and their leaf status
     final Map<Uri, bool> allPaths = <Uri, bool>{};
 
+    // First, collect all intermediate paths to identify folders
+    final Set<Uri> allIntermediatePaths = <Uri>{};
+    for (final Uri path in originalPaths) {
+      final List<Uri> intermediatePaths = TreePath.generateIntermediatePaths(path);
+      allIntermediatePaths.addAll(intermediatePaths);
+    }
+
     // Process each path
     for (final Uri path in originalPaths) {
-      // Add the original path as a leaf
-      allPaths[path] = true;
+      // A path is a leaf only if:
+      // 1. It's in the original paths list AND
+      // 2. It's NOT an intermediate path for any other path
+      final bool isLeaf = !allIntermediatePaths.contains(path);
+      allPaths[path] = isLeaf;
 
       // Generate and add all intermediate paths as folders
-      final List<Uri> intermediatePaths = TreePath.generateIntermediatePaths(
-        path,
-      );
+      final List<Uri> intermediatePaths = TreePath.generateIntermediatePaths(path);
       for (final Uri intermediatePath in intermediatePaths) {
-        // Only mark as folder if it's not also an original path
+        // Intermediate paths are always folders
         allPaths.putIfAbsent(intermediatePath, () => false);
       }
     }

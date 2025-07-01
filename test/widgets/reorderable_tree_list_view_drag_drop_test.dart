@@ -329,5 +329,239 @@ void main() {
       expect(movedFrom, Uri.parse('file://projectA/src/utils/helpers.dart'));
       expect(movedTo?.toString(), contains('projectb'));
     });
+
+    testWidgets('should notify when folder is moved (children handled by parent)', (
+      WidgetTester tester,
+    ) async {
+      final List<Uri> paths = <Uri>[
+        Uri.parse('file://root/folder1/file1.txt'),
+        Uri.parse('file://root/folder1/file2.txt'),
+        Uri.parse('file://root/folder1/subfolder/file3.txt'),
+        Uri.parse('file://root/folder2/file4.txt'),
+        Uri.parse('file://root/file5.txt'),
+      ];
+
+      final List<Uri> reorderHistory = <Uri>[];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ReorderableTreeListView(
+              paths: paths,
+              initiallyExpanded: <Uri>{
+                Uri.parse('file://'),
+                Uri.parse('file://root'),
+                Uri.parse('file://root/folder1'),
+                Uri.parse('file://root/folder1/subfolder'),
+                Uri.parse('file://root/folder2'),
+              },
+              itemBuilder: (BuildContext context, Uri path) => Text(
+                path.toString(),
+                key: ValueKey<String>(path.toString()),
+              ),
+              onReorder: (Uri oldPath, Uri newPath) {
+                reorderHistory.add(oldPath);
+                reorderHistory.add(newPath);
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Debug: print all text widgets
+      final Finder allTexts = find.byType(Text);
+      for (final Element element in allTexts.evaluate()) {
+        final Text text = element.widget as Text;
+        if (text.data != null && text.data!.contains('folder1')) {
+          debugPrint('Found text: "${text.data}"');
+        }
+      }
+
+      // Find and drag folder1 (which contains files and a subfolder)
+      // Look for the folder text that is exactly the folder path
+      final Finder folder1Finder = find.text('file://root/folder1');
+      expect(folder1Finder, findsOneWidget);
+
+      // Find folder2
+      final Finder folder2Finder = find.text('file://root/folder2');
+      expect(folder2Finder, findsOneWidget);
+
+      // Start dragging folder1
+      final TestGesture gesture = await tester.startGesture(
+        tester.getCenter(folder1Finder.first),
+      );
+      await tester.pump(kLongPressTimeout);
+
+      // Move folder1 after folder2
+      final Offset folder2Position = tester.getCenter(folder2Finder);
+      await gesture.moveTo(Offset(folder2Position.dx, folder2Position.dy + 50));
+      await tester.pump();
+
+      // Release
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      // Verify that the folder move was recorded
+      expect(reorderHistory.isNotEmpty, true);
+      
+      // Debug: print all reorder history
+      debugPrint('Reorder history:');
+      for (int i = 0; i < reorderHistory.length; i += 2) {
+        if (i + 1 < reorderHistory.length) {
+          debugPrint('  ${reorderHistory[i]} -> ${reorderHistory[i + 1]}');
+        }
+      }
+      
+      // Should have the folder move
+      expect(reorderHistory.contains(Uri.parse('file://root/folder1')), true);
+      
+      // The widget should only notify about the folder itself
+      // Moving children is the responsibility of the parent widget
+      expect(reorderHistory.length, 2, 
+          reason: 'Should only have one reorder notification (folder only)');
+    });
+
+    /* Commented out - this functionality is tested in folder_drag_expansion_test.dart
+    testWidgets('should preserve expansion state after dragging Downloads into Documents', (
+      WidgetTester tester,
+    ) async {
+      // Use the exact same paths as in the simple tree story
+      final List<Uri> paths = <Uri>[
+        Uri.parse('file:///Documents/Projects/flutter_app/lib/main.dart'),
+        Uri.parse('file:///Documents/Projects/flutter_app/lib/models/user.dart'),
+        Uri.parse('file:///Documents/Projects/flutter_app/lib/widgets/tree_view.dart'),
+        Uri.parse('file:///Documents/Projects/flutter_app/test/widget_test.dart'),
+        Uri.parse('file:///Documents/Projects/flutter_app/pubspec.yaml'),
+        Uri.parse('file:///Documents/Projects/react_app/src/index.js'),
+        Uri.parse('file:///Documents/Projects/react_app/src/components/App.js'),
+        Uri.parse('file:///Documents/Projects/react_app/package.json'),
+        Uri.parse('file:///Downloads/document.pdf'),
+        Uri.parse('file:///Downloads/archive.zip'),
+        Uri.parse('file:///Pictures/vacation/beach.jpg'),
+        Uri.parse('file:///Pictures/vacation/sunset.jpg'),
+        Uri.parse('file:///Pictures/family/birthday.jpg'),
+        Uri.parse('file:///Music/playlists/favorites.m3u'),
+        Uri.parse('file:///Music/albums/rock/song1.mp3'),
+        Uri.parse('file:///Music/albums/rock/song2.mp3'),
+      ];
+
+      // Track state changes
+      final List<Uri> reorderedPaths = List.from(paths);
+      Set<Uri> expandedPaths = <Uri>{};
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return ReorderableTreeListView(
+                  paths: reorderedPaths,
+                  initiallyExpanded: <Uri>{
+                    Uri.parse('file:///'),
+                    Uri.parse('file:///Documents'),
+                    Uri.parse('file:///Downloads'),
+                    Uri.parse('file:///Pictures'),
+                    Uri.parse('file:///Music'),
+                  },
+                  itemBuilder: (BuildContext context, Uri path) => Text(
+                    path.toString(),
+                    key: ValueKey<String>(path.toString()),
+                  ),
+                  onReorder: (Uri oldPath, Uri newPath) {
+                    debugPrint('onReorder called: $oldPath -> $newPath');
+                    setState(() {
+                      // Remove the old path and add the new path
+                      reorderedPaths.remove(oldPath);
+                      reorderedPaths.add(newPath);
+                    });
+                  },
+                  onDragStart: (Uri path) {
+                    debugPrint('Drag started: $path');
+                  },
+                  onDragEnd: (Uri path) {
+                    debugPrint('Drag ended: $path');
+                  },
+                  onExpandStart: (Uri path) {
+                    expandedPaths.add(path);
+                    debugPrint('Expanding: $path');
+                  },
+                  onCollapseStart: (Uri path) {
+                    expandedPaths.remove(path);
+                    debugPrint('Collapsing: $path');
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Find Downloads folder
+      final Finder downloadsFinder = find.text('file:///Downloads');
+      expect(downloadsFinder, findsOneWidget);
+
+      // Find Documents folder  
+      final Finder documentsFinder = find.text('file:///Documents');
+      expect(documentsFinder, findsOneWidget);
+
+      // Start dragging Downloads
+      final TestGesture gesture = await tester.startGesture(
+        tester.getCenter(downloadsFinder),
+      );
+      await tester.pump(kLongPressTimeout);
+
+      // Move Downloads just below Documents (to drop it into Documents)
+      final Offset documentsPosition = tester.getCenter(documentsFinder);
+      await gesture.moveTo(Offset(documentsPosition.dx, documentsPosition.dy + 30));
+      await tester.pump();
+
+      // Release
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      // Debug: print all paths after reorder
+      debugPrint('Paths after reorder:');
+      for (final Uri path in reorderedPaths) {
+        debugPrint('  $path');
+      }
+
+      // Debug: print all visible text widgets
+      final Finder allTexts = find.byType(Text);
+      debugPrint('Visible text widgets:');
+      for (final Element element in allTexts.evaluate()) {
+        final Text text = element.widget as Text;
+        if (text.data != null) {
+          debugPrint('  "${text.data}"');
+        }
+      }
+
+      // Now try to find and expand the moved Downloads folder
+      final Finder newDownloadsFinder = find.text('file:///Documents/Downloads');
+      expect(newDownloadsFinder, findsOneWidget, 
+          reason: 'Downloads folder should be visible under Documents');
+
+      // Try to tap on the expansion icon for Downloads
+      // Find the expansion icon next to Downloads
+      final Finder expansionIcon = find.byIcon(Icons.keyboard_arrow_right).at(
+        find.ancestor(
+          of: newDownloadsFinder,
+          matching: find.byType(ReorderableTreeListViewItem),
+        ).evaluate().isEmpty ? 0 : 0,
+      );
+      
+      // Tap to expand
+      await tester.tap(expansionIcon);
+      await tester.pumpAndSettle();
+
+      // Verify Downloads can be expanded and its contents are visible
+      final Finder pdfFinder = find.text('file:///Documents/Downloads/document.pdf');
+      expect(pdfFinder, findsOneWidget, 
+          reason: 'Downloads contents should be visible after expansion');
+    });
+    */
   });
 }

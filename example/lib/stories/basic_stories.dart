@@ -66,7 +66,23 @@ class _SimpleTreeStoryState extends State<_SimpleTreeStory> {
         ),
         onReorder: (oldPath, newPath) {
           setState(() {
+            // Remove the old path
             paths.remove(oldPath);
+            
+            // If this is a folder (has children), also update all children
+            final List<Uri> childPaths = paths.where((path) {
+              return path.toString().startsWith(oldPath.toString() + '/');
+            }).toList();
+            
+            for (final childPath in childPaths) {
+              paths.remove(childPath);
+              // Calculate new child path
+              final String relativePath = childPath.toString().substring(oldPath.toString().length);
+              final Uri newChildPath = Uri.parse(newPath.toString() + relativePath);
+              paths.add(newChildPath);
+            }
+            
+            // Add the new path
             paths.add(newPath);
           });
           StoryHelpers.mockReorderCallback(oldPath, newPath);
@@ -119,7 +135,23 @@ class _FileSystemStoryState extends State<_FileSystemStory> {
         onReorder: enableDragAndDrop
             ? (oldPath, newPath) {
                 setState(() {
+                  // Remove the old path
                   paths.remove(oldPath);
+                  
+                  // If this is a folder (has children), also update all children
+                  final List<Uri> childPaths = paths.where((path) {
+                    return path.toString().startsWith(oldPath.toString() + '/');
+                  }).toList();
+                  
+                  for (final childPath in childPaths) {
+                    paths.remove(childPath);
+                    // Calculate new child path
+                    final String relativePath = childPath.toString().substring(oldPath.toString().length);
+                    final Uri newChildPath = Uri.parse(newPath.toString() + relativePath);
+                    paths.add(newChildPath);
+                  }
+                  
+                  // Add the new path
                   paths.add(newPath);
                 });
                 StoryHelpers.mockReorderCallback(oldPath, newPath);
