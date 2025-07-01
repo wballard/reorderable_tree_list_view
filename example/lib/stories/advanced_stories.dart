@@ -377,7 +377,6 @@ class _ProjectNavigatorStoryState extends State<_ProjectNavigatorStory> {
                       indentSize: 20,
                       itemPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     ),
-                    expandedByDefault: true,
                     itemBuilder: (context, path) => _buildProjectItem(context, path),
                     folderBuilder: (context, path) => _buildProjectFolder(context, path),
                     onItemActivated: (path) {
@@ -722,7 +721,6 @@ class _PersistentStateStoryState extends State<_PersistentStateStory> {
           Expanded(
             child: ReorderableTreeListView(
               paths: paths,
-              expandedByDefault: false,
               initiallyExpanded: expandedPaths,
               itemBuilder: (context, path) => StoryItemBuilder.buildFileItem(context, path),
               folderBuilder: (context, path) => StoryItemBuilder.buildFolderItem(context, path),

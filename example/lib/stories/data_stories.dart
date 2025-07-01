@@ -73,11 +73,6 @@ class _LargeDatasetStoryState extends State<_LargeDatasetStory> {
 
   @override
   Widget build(BuildContext context) {
-    final bool expandedByDefault = context.knobs.boolean(
-      label: 'Expanded by Default',
-      initial: false,
-    );
-    
     final bool animateExpansion = context.knobs.boolean(
       label: 'Animate Expansion',
       initial: true,
@@ -137,7 +132,6 @@ class _LargeDatasetStoryState extends State<_LargeDatasetStory> {
                   )
                 : ReorderableTreeListView(
                     paths: paths,
-                    expandedByDefault: expandedByDefault,
                     animateExpansion: animateExpansion,
                     itemBuilder: (context, path) => StoryItemBuilder.buildSimpleItem(context, path),
                     onReorder: (oldPath, newPath) {
@@ -759,11 +753,6 @@ class _DeepHierarchyStoryState extends State<_DeepHierarchyStory> {
 
   @override
   Widget build(BuildContext context) {
-    final bool expandedByDefault = context.knobs.boolean(
-      label: 'Expanded by Default',
-      initial: false,
-    );
-    
     final bool showDepthIndicator = context.knobs.boolean(
       label: 'Show Depth Indicator',
       initial: true,
@@ -801,7 +790,6 @@ class _DeepHierarchyStoryState extends State<_DeepHierarchyStory> {
           Expanded(
             child: ReorderableTreeListView(
               paths: paths,
-              expandedByDefault: expandedByDefault,
               itemBuilder: (context, path) => showDepthIndicator
                   ? _buildDepthItem(context, path)
                   : StoryItemBuilder.buildFileItem(context, path),

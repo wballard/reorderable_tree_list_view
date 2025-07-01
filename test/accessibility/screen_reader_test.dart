@@ -10,7 +10,6 @@ void main() {
     testWidgets('should provide semantic labels for all items', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
-        expandedByDefault: true,
       ));
 
       // Check each item has semantic label
@@ -26,7 +25,6 @@ void main() {
     testWidgets('should announce tree structure', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
-        expandedByDefault: true,
       ));
 
       // Check folder semantics
@@ -42,7 +40,6 @@ void main() {
     testWidgets('should announce expansion state changes', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
-        expandedByDefault: true, // Fix: folders need to be visible
         onExpandStart: (Uri path) {
           // Verify expansion announcements are made
         },
@@ -62,7 +59,6 @@ void main() {
     testWidgets('should provide context for drag operations', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
-        expandedByDefault: true,
         onReorder: (Uri oldPath, Uri newPath) {},
       ));
 
@@ -79,7 +75,6 @@ void main() {
     testWidgets('should announce selection changes', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
-        expandedByDefault: true,
         selectionMode: SelectionMode.multiple,
         onSelectionChanged: (Set<Uri> selection) {}, // Verify selection announcements
       ));
@@ -167,7 +162,6 @@ void main() {
       // Switch to loaded state
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
-        expandedByDefault: true,
       ));
 
       // Verify tree is announced
@@ -182,7 +176,6 @@ void main() {
         ),
         child: TestUtils.createTestApp(
           paths: TestUtils.sampleFilePaths,
-          expandedByDefault: true,
           theme: const TreeTheme(),
         ),
       ));

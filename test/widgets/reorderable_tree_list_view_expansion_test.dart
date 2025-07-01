@@ -53,7 +53,6 @@ void main() {
               home: Scaffold(
                 body: ReorderableTreeListView(
                   paths: testPaths,
-                  expandedByDefault: false,
                   itemBuilder: (BuildContext context, Uri path) => Text(
                     path.pathSegments.isNotEmpty
                         ? path.pathSegments.last
@@ -80,7 +79,6 @@ void main() {
             home: Scaffold(
               body: ReorderableTreeListView(
                 paths: testPaths,
-                expandedByDefault: false,
                 initiallyExpanded: <Uri>{
                   Uri.parse('file://'),
                   Uri.parse('file://root'),
@@ -173,7 +171,6 @@ void main() {
             home: Scaffold(
               body: ReorderableTreeListView(
                 paths: testPaths,
-                expandedByDefault: false,
                 initiallyExpanded: <Uri>{
                   Uri.parse('file://'),
                   Uri.parse('file://root'),

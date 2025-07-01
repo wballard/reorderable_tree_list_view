@@ -13,7 +13,6 @@ void main() {
         home: Scaffold(
           body: ReorderableTreeListView(
             paths: TestUtils.sampleFilePaths,
-            expandedByDefault: true,
             selectionMode: SelectionMode.single,
             itemBuilder: (context, path) => Text(TreePath.getDisplayName(path)),
           ),
@@ -44,7 +43,6 @@ void main() {
     testWidgets('should navigate with arrow keys', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
-        expandedByDefault: true,
         selectionMode: SelectionMode.single,
         enableKeyboardNavigation: true,
       ));
@@ -73,7 +71,6 @@ void main() {
     testWidgets('should expand/collapse with Enter key', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
-        expandedByDefault: true, // Fix: folders need to be visible
       ));
 
       // Focus on a folder
@@ -90,7 +87,6 @@ void main() {
     testWidgets('should select with Space key', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
-        expandedByDefault: true,
         selectionMode: SelectionMode.multiple,
         onSelectionChanged: (Set<Uri> selection) {}, // Verifying selection with Space key
       ));
@@ -111,7 +107,6 @@ void main() {
     testWidgets('should handle focus indicators', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
-        expandedByDefault: true,
         theme: const TreeTheme(
           focusColor: Colors.blue,
         ),
@@ -148,7 +143,6 @@ void main() {
             child: Scaffold(
               body: ReorderableTreeListView(
                 paths: TestUtils.sampleFilePaths,
-                expandedByDefault: true,
                 itemBuilder: (BuildContext context, Uri path) => Text(TreePath.getDisplayName(path)),
               ),
             ),
@@ -174,7 +168,6 @@ void main() {
     testWidgets('should announce focus changes for screen readers', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
-        expandedByDefault: true,
       ));
 
       // Check semantics
@@ -195,7 +188,6 @@ void main() {
     testWidgets('should provide keyboard navigation help', (WidgetTester tester) async {
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
-        expandedByDefault: true,
       ));
 
       // The tree should have semantic hints for keyboard navigation

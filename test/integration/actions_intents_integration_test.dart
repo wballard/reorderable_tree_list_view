@@ -12,7 +12,6 @@ void main() {
         home: Scaffold(
           body: ReorderableTreeListView(
             paths: TestUtils.sampleFilePaths,
-            expandedByDefault: true,
             itemBuilder: (context, path) => Text(TreePath.getDisplayName(path)),
           ),
         ),
@@ -54,7 +53,6 @@ void main() {
           child: Scaffold(
             body: ReorderableTreeListView(
               paths: TestUtils.sampleFilePaths,
-              expandedByDefault: true, // Fix: folders need to be visible
               itemBuilder: (context, path) => Text(TreePath.getDisplayName(path)),
             ),
           ),
@@ -94,7 +92,6 @@ void main() {
               },
               child: ReorderableTreeListView(
                 paths: TestUtils.sampleFilePaths,
-                expandedByDefault: true, // Fix: folders need to be visible
                 selectionMode: SelectionMode.single,
                 itemBuilder: (context, path) => Text(TreePath.getDisplayName(path)),
               ),
@@ -229,7 +226,6 @@ void main() {
           child: Scaffold(
             body: ReorderableTreeListView(
               paths: TestUtils.sampleFilePaths,
-              expandedByDefault: true, // Fix: folders need to be visible
               selectionMode: SelectionMode.single,
               itemBuilder: (context, path) => Text(TreePath.getDisplayName(path)),
             ),
@@ -249,7 +245,6 @@ void main() {
         home: Scaffold(
           body: ReorderableTreeListView(
             paths: TestUtils.sampleFilePaths,
-            expandedByDefault: true,
             itemBuilder: (BuildContext context, Uri path) => Text(TreePath.getDisplayName(path)),
           ),
         ),

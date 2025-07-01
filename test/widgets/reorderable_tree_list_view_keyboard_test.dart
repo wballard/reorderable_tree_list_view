@@ -168,7 +168,6 @@ void main() {
                 paths: testPaths,
                 itemBuilder: (BuildContext context, Uri path) =>
                     Text(path.toString()),
-                expandedByDefault: false,
               ),
             ),
           ),

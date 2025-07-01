@@ -53,11 +53,6 @@ class _SimpleTreeStoryState extends State<_SimpleTreeStory> {
       max: 64.0,
     );
 
-    final bool expandedByDefault = context.knobs.boolean(
-      label: 'Expanded by Default',
-      initial: true,
-    );
-
     return StoryWrapper(
       title: 'Simple Tree',
       description: 'Basic tree configuration with customizable options',
@@ -66,7 +61,6 @@ class _SimpleTreeStoryState extends State<_SimpleTreeStory> {
         theme: TreeTheme(
           indentSize: indentSize,
         ),
-        expandedByDefault: expandedByDefault,
         itemBuilder: (context, path) => Text(
           TreePath.getDisplayName(path),
         ),

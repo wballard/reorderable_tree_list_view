@@ -239,7 +239,6 @@ void main() {
         builder: (BuildContext context, StateSetter setState) {
           return TestUtils.createTestApp(
             paths: paths,
-            expandedByDefault: true,
             onReorder: (Uri oldPath, Uri newPath) {
               setState(() {
                 paths.remove(oldPath);
@@ -311,7 +310,6 @@ void main() {
         builder: (BuildContext context, StateSetter setState) {
           return TestUtils.createTestApp(
             paths: paths,
-            expandedByDefault: true,
             onReorder: (Uri oldPath, Uri newPath) {
               setState(() {
                 paths.remove(oldPath);

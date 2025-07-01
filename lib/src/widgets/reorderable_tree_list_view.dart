@@ -38,7 +38,6 @@ class ReorderableTreeListView extends StatefulWidget {
     this.shrinkWrap = false,
     this.padding,
     this.physics,
-    this.expandedByDefault = true,
     this.initiallyExpanded,
     this.animateExpansion = true,
     this.onReorder,
@@ -97,16 +96,10 @@ class ReorderableTreeListView extends StatefulWidget {
   /// How the list view should respond to user input.
   final ScrollPhysics? physics;
 
-  /// Whether folders should be expanded by default.
+  /// A set of paths that should be initially expanded.
   ///
-  /// If true, all folder nodes start in the expanded state.
-  /// If false, all folder nodes start collapsed.
-  final bool expandedByDefault;
-
-  /// A set of paths that should be initially expanded, regardless of [expandedByDefault].
-  ///
-  /// If null, uses [expandedByDefault] for all folders.
-  /// If provided, the specified paths will be expanded while others follow [expandedByDefault].
+  /// If null, all folders start collapsed.
+  /// If provided, the specified paths will be expanded while others remain collapsed.
   final Set<Uri>? initiallyExpanded;
 
   /// Whether to animate expansion and collapse operations.
@@ -206,7 +199,7 @@ class ReorderableTreeListView extends StatefulWidget {
 }
 
 class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
-  late TreeState _treeState;
+  TreeState? _treeState;
   late KeyboardNavigationController _keyboardController;
   late TreeFocusManager _focusManager;
   late EventController _eventController;
@@ -237,7 +230,7 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
       ..canDragAsyncCallback = widget.canDragAsync
       ..canDropAsyncCallback = widget.canDropAsync;
     _keyboardController = KeyboardNavigationController(
-      treeState: _treeState,
+      treeState: _treeState!,
       selectionMode: widget.selectionMode,
       initialSelection: widget.initialSelection,
       onItemActivated: (Uri path) {
@@ -253,17 +246,16 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
 
     // Check if paths or expansion settings have changed
     if (_pathsChanged(oldWidget.paths, widget.paths) ||
-        oldWidget.expandedByDefault != widget.expandedByDefault ||
         oldWidget.initiallyExpanded != widget.initiallyExpanded) {
       _buildTreeState();
-      _keyboardController.treeState = _treeState;
+      _keyboardController.treeState = _treeState!;
     }
 
     // Update selection mode if changed
     if (oldWidget.selectionMode != widget.selectionMode) {
       _keyboardController.dispose();
       _keyboardController = KeyboardNavigationController(
-        treeState: _treeState,
+        treeState: _treeState!,
         selectionMode: widget.selectionMode,
         initialSelection: _keyboardController.selectedPaths,
         onItemActivated: (Uri path) {
@@ -323,18 +315,29 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
   }
 
   void _buildTreeState() {
+    // Preserve current expansion state if tree state exists
+    Set<Uri> previouslyExpandedPaths = <Uri>{};
+    if (_treeState != null) {
+      previouslyExpandedPaths = _treeState!.expandedPaths;
+    }
+
     final List<TreeNode> nodes = TreeBuilder.buildFromPaths(widget.paths);
     _treeState = TreeState(nodes);
 
-    // Apply expansion settings
-    if (!widget.expandedByDefault) {
-      _treeState.collapseAll();
+    // Start with all folders collapsed by default
+    _treeState!.collapseAll();
+
+    // Restore previous expansion state for paths that still exist
+    for (final Uri path in previouslyExpandedPaths) {
+      if (_treeState!.getNodeByPath(path) != null) {
+        _treeState!.setExpanded(path, expanded: true);
+      }
     }
 
-    // Apply initially expanded paths if provided
+    // Apply initially expanded paths if provided (this can override preserved state)
     if (widget.initiallyExpanded != null) {
       for (final Uri path in widget.initiallyExpanded!) {
-        _treeState.setExpanded(path, expanded: true);
+        _treeState!.setExpanded(path, expanded: true);
       }
     }
   }
@@ -351,7 +354,7 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
   }
 
   Future<void> _toggleExpansion(Uri path) async {
-    final bool isExpanded = _treeState.isExpanded(path);
+    final bool isExpanded = _treeState!.isExpanded(path);
 
     // Check if expansion/collapse is allowed
     if (!isExpanded) {
@@ -375,7 +378,7 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
     }
 
     setState(() {
-      _treeState.toggleExpanded(path);
+      _treeState!.toggleExpanded(path);
     });
 
     // Notify completion
@@ -430,7 +433,7 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
     final DropValidationResult validation = DragDropHandler.validateDrop(
       draggedNode: draggedNode,
       targetParentPath: TreePath.getParentPath(newPath) ?? Uri.parse('file://'),
-      allNodes: _treeState.allNodes,
+      allNodes: _treeState!.allNodes,
     );
 
     if (!validation.isValid) {
@@ -468,13 +471,13 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
       },
     ),
     ActivateNodeIntent: ActivateNodeAction(
-      treeState: _treeState,
+      treeState: _treeState!,
       onActivate: (Uri path) {
         _eventController.notifyItemActivated(path);
       },
     ),
     SelectNodeIntent: SelectNodeAction(
-      treeState: _treeState,
+      treeState: _treeState!,
       keyboardController: _keyboardController,
       selectionMode: widget.selectionMode,
     ),
@@ -486,7 +489,7 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
 
   @override
   Widget build(BuildContext context) {
-    final List<TreeNode> visibleNodes = _treeState.getVisibleNodes();
+    final List<TreeNode> visibleNodes = _treeState!.getVisibleNodes();
 
     // Cleanup stale focus nodes
     final Set<Uri> activePaths = visibleNodes
@@ -503,8 +506,8 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
       itemCount: visibleNodes.length,
       itemBuilder: (BuildContext context, int index) {
         final TreeNode node = visibleNodes[index];
-        final bool hasChildren = _treeState.getChildren(node.path).isNotEmpty;
-        final bool isExpanded = _treeState.isExpanded(node.path);
+        final bool hasChildren = _treeState!.getChildren(node.path).isNotEmpty;
+        final bool isExpanded = _treeState!.isExpanded(node.path);
 
         // Get the user-provided content
         final Widget userContent;
@@ -588,7 +591,7 @@ class _ReorderableTreeListViewState extends State<ReorderableTreeListView> {
           onFocusChange: (bool hasFocus) {
             if (hasFocus && _keyboardController.focusedPath == null) {
               // When the tree gains focus and no item is focused, focus the first item
-              final List<TreeNode> visible = _treeState.getVisibleNodes();
+              final List<TreeNode> visible = _treeState!.getVisibleNodes();
               if (visible.isNotEmpty) {
                 // Find first meaningful node (skip root protocol nodes)
                 TreeNode? firstNode;

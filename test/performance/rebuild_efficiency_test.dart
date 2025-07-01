@@ -14,7 +14,6 @@ void main() {
         builder: (context, setState) {
           return TestUtils.createTestApp(
             paths: TestUtils.sampleFilePaths,
-            expandedByDefault: true, // Fix: folders need to be visible
             itemBuilder: (context, path) {
               final name = TreePath.getDisplayName(path);
               itemBuildCounts[name] = (itemBuildCounts[name] ?? 0) + 1;
@@ -49,7 +48,6 @@ void main() {
 
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: paths,
-        expandedByDefault: true,
         itemBuilder: (context, path) {
           buildCount++;
           return Text(TreePath.getDisplayName(path));
@@ -80,7 +78,6 @@ void main() {
         builder: (context, setState) {
           return TestUtils.createTestApp(
             paths: TestUtils.sampleFilePaths,
-            expandedByDefault: true,
             selectionMode: SelectionMode.multiple,
             initialSelection: selectedPaths,
             onSelectionChanged: (selection) {
@@ -125,7 +122,6 @@ void main() {
 
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
-        expandedByDefault: true,
         itemBuilder: (context, path) {
           final result = expensiveComputation(path);
           return Text(result);
@@ -155,7 +151,6 @@ void main() {
         builder: (context, setState) {
           return TestUtils.createTestApp(
             paths: TestUtils.sampleFilePaths,
-            expandedByDefault: true,
             theme: theme,
             itemBuilder: (context, path) {
               buildCount++;
@@ -172,7 +167,6 @@ void main() {
         builder: (context, setState) {
           return TestUtils.createTestApp(
             paths: TestUtils.sampleFilePaths,
-            expandedByDefault: true,
             theme: const TreeTheme(indentSize: 40),
             itemBuilder: (context, path) {
               buildCount++;
@@ -192,7 +186,6 @@ void main() {
 
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: TestUtils.sampleFilePaths,
-        expandedByDefault: true,
         itemBuilder: (context, path) {
           return _DisposableItem(
             path: path,
@@ -236,7 +229,6 @@ void main() {
                   Expanded(
                     child: ReorderableTreeListView(
                       paths: paths,
-                      expandedByDefault: true,
                       itemBuilder: (context, path) {
                         buildCount++;
                     return Text(TreePath.getDisplayName(path));

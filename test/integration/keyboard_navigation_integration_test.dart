@@ -12,7 +12,6 @@ void main() {
         paths: TestUtils.sampleFilePaths,
         selectionMode: SelectionMode.single,
         enableKeyboardNavigation: true,
-        expandedByDefault: true, // Fix: folders need to be visible
         onSelectionChanged: (Set<Uri> selection) {}, // Verify selection with keyboard
         onItemActivated: (Uri path) {}, // Verify activation with Enter
       ));

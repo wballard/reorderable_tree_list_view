@@ -27,7 +27,6 @@ void main() {
               onExpandEnd: expandEndPaths.add,
               onCollapseStart: collapseStartPaths.add,
               onCollapseEnd: collapseEndPaths.add,
-              expandedByDefault: false,
             ),
           ),
         ),
@@ -180,7 +179,6 @@ void main() {
             body: ReorderableTreeListView(
               paths: paths,
               itemBuilder: (BuildContext context, Uri path) => Text(path.toString()),
-              expandedByDefault: false,
               canExpand: (Uri path) => allowExpansion,
               onExpandEnd: expandedPaths.add,
             ),
@@ -262,7 +260,6 @@ void main() {
             body: ReorderableTreeListView(
               paths: paths,
               itemBuilder: (BuildContext context, Uri path) => Text(path.toString()),
-              expandedByDefault: false,
               canExpandAsync: (Uri path) async {
                 await Future<void>.delayed(const Duration(milliseconds: 100));
                 return path.path.contains('folder1');

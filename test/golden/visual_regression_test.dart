@@ -45,7 +45,6 @@ void main() {
         home: Scaffold(
           body: ReorderableTreeListView(
             paths: TestUtils.sampleFilePaths,
-            expandedByDefault: true,
             theme: const TreeTheme(),
             itemBuilder: (BuildContext context, Uri path) => Row(
               children: [
@@ -221,7 +220,6 @@ void main() {
         home: Scaffold(
           body: ReorderableTreeListView(
             paths: MockData.deepHierarchy,
-            expandedByDefault: true,
             theme: const TreeTheme(
               indentSize: 48,
             ),

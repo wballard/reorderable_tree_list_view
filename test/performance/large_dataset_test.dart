@@ -13,7 +13,6 @@ void main() {
       
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: largePaths,
-        expandedByDefault: false,
       ));
       
       stopwatch.stop();
@@ -28,7 +27,6 @@ void main() {
       
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: largePaths,
-        expandedByDefault: false,
       ));
 
       // Measure scroll performance
@@ -61,7 +59,6 @@ void main() {
       
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: largePaths,
-        expandedByDefault: true, // Fix: folders need to be visible
       ));
 
       // Verify that folders are generated and visible
@@ -101,7 +98,6 @@ void main() {
       
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: paths,
-        expandedByDefault: true, // Fix: folders need to be visible
         itemBuilder: (context, path) {
           buildCount++;
           return Text(TreePath.getDisplayName(path));
@@ -124,7 +120,6 @@ void main() {
       
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: paths,
-        expandedByDefault: true,
       ));
 
       // Navigate away to dispose
@@ -145,7 +140,6 @@ void main() {
       
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: paths,
-        expandedByDefault: false,
       ));
 
       // Count visible items
@@ -170,7 +164,6 @@ void main() {
       
       await tester.pumpWidget(TestUtils.createTestApp(
         paths: deepPaths,
-        expandedByDefault: true,
       ));
       
       stopwatch.stop();
