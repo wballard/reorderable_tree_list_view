@@ -1,0 +1,1 @@
+The right click context menu needs to prevent launching the default web right click menu.

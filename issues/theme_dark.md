@@ -1,0 +1,1 @@
+Toggling the use custom dark theme knob has no effect.

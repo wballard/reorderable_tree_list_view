@@ -1,0 +1,1 @@
+When I drag and drop a folder, it and all its children need to move with it.
