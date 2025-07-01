@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
 
 import 'package:reorderable_tree_list_view/src/intents/activate_node_intent.dart';
 import 'package:reorderable_tree_list_view/src/intents/collapse_node_intent.dart';
@@ -222,12 +225,36 @@ class ReorderableTreeListViewItem extends StatelessWidget {
 
     // Wrap with GestureDetector for context menu support
     if (onContextMenu != null) {
-      result = GestureDetector(
-        onSecondaryTapDown: (TapDownDetails details) {
-          onContextMenu!(details.globalPosition);
-        },
-        child: result,
-      );
+      if (kIsWeb) {
+        // On web, use Listener to capture right-click and prevent browser context menu
+        result = Listener(
+          onPointerDown: (PointerDownEvent event) {
+            if (event.kind == PointerDeviceKind.mouse && 
+                event.buttons == kSecondaryButton) {
+              // Temporarily disable browser context menu
+              BrowserContextMenu.disableContextMenu();
+              
+              // Call context menu handler
+              onContextMenu!(event.position);
+              
+              // Re-enable browser context menu after a delay
+              // This ensures our custom menu has time to show
+              Future.delayed(const Duration(milliseconds: 100), () {
+                BrowserContextMenu.enableContextMenu();
+              });
+            }
+          },
+          child: result,
+        );
+      } else {
+        // On other platforms, use GestureDetector with onSecondaryTapUp
+        result = GestureDetector(
+          onSecondaryTapUp: (TapUpDetails details) {
+            onContextMenu!(details.globalPosition);
+          },
+          child: result,
+        );
+      }
     }
 
     return Material(

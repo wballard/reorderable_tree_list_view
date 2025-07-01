@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:storybook_flutter/storybook_flutter.dart';
 import 'package:reorderable_tree_list_view/reorderable_tree_list_view.dart';
 
@@ -326,6 +328,7 @@ class _ContextMenuStoryState extends State<_ContextMenuStory> {
                 ),
                 const Text('• Right-click on any item to show context menu'),
                 const Text('• Context menu actions will be logged'),
+                if (kIsWeb) const Text('• Browser context menu is prevented automatically'),
                 if (_lastContextMenuAction != null) ...[
                   const SizedBox(height: 8),
                   Text(
@@ -406,6 +409,11 @@ class _ContextMenuStoryState extends State<_ContextMenuStory> {
         ),
       ],
     ).then((value) {
+      // Re-enable browser context menu on web after the menu is dismissed
+      if (kIsWeb) {
+        BrowserContextMenu.enableContextMenu();
+      }
+      
       if (value != null) {
         setState(() {
           _lastContextMenuAction = '$value on $displayName';
