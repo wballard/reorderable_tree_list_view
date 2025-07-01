@@ -8,7 +8,8 @@
 
 A high-performance Flutter widget that displays hierarchical data in a tree structure with drag-and-drop reordering capabilities. Built on top of Flutter's ReorderableListView, it provides a smooth and intuitive user experience.
 
-![ReorderableTreeListView Demo](https://raw.githubusercontent.com/wballard/reorderable_tree_list_view/main/doc/demo.gif)
+
+Visit our [interactive Storybook demo](https://wballard.github.io/reorderable_tree_list_view) to see all features in action.
 
 ## ✨ Features
 
@@ -192,10 +193,6 @@ Check out the [example](example/) directory for complete examples:
 - **[Simple Example](example/lib/main_simple.dart)** - Basic usage with minimal configuration
 - **[Storybook](example/)** - Interactive showcase of all features
 - **[Advanced Examples](example/stories/advanced_stories.dart)** - Complex integrations
-
-### Live Demo
-
-Visit our [interactive Storybook demo](https://wballard.github.io/reorderable_tree_list_view) to see all features in action.
 
 ## 🔧 Performance
 

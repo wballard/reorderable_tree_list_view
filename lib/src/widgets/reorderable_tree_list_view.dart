@@ -27,8 +27,8 @@ import 'package:reorderable_tree_list_view/src/widgets/tree_view_shortcuts.dart'
 /// Supports expand/collapse functionality for folder nodes.
 class ReorderableTreeListView extends StatefulWidget {
   /// Creates a ReorderableTreeListView.
-  const ReorderableTreeListView({
-    required this.paths,
+  ReorderableTreeListView({
+    required List<Uri> paths,
     required this.itemBuilder,
     super.key,
     this.theme,
@@ -65,7 +65,7 @@ class ReorderableTreeListView extends StatefulWidget {
     this.canExpandAsync,
     this.canDragAsync,
     this.canDropAsync,
-  });
+  }) : paths = List.unmodifiable(paths);
 
   /// The sparse list of URI paths to display in the tree.
   final List<Uri> paths;
